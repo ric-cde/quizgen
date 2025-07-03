@@ -1,0 +1,12 @@
+{
+	"name": "quizgen",
+	"version": "1.0.0",
+	"description": "LLM-based quiz generator for any topic",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Richard Herlihy",
+	"license": "ISC",
+	"type": "module"
+}

@@ -1,0 +1,46 @@
+{
+	"topic": "dolphins",
+	"desc": "Basic English-language questions about dolphin facts.",
+	"questions": [
+		{
+			"prompt": "Are dolphins [mammals] or [fish]?",
+			"answers": ["mammals", "mammal"]
+		},
+		{
+			"prompt": "Do river dolphins live in [saltwater] or [freshwater]?",
+			"answers": ["freshwater", "both"]
+		},
+		{
+			"prompt": "How many fins does a typical dolphin have?",
+			"answers": ["three", "3"]
+		},
+		{
+			"prompt": "Do dolphins breathe [air] or [water]?",
+			"answers": ["air"]
+		},
+		{
+			"prompt": "What is the name of the hole dolphins use to breathe?",
+			"answers": ["blowhole", "blow hole", "spiracle"]
+		},
+		{
+			"prompt": "Are dolphins known for being [smart] or [slow-witted]?",
+			"answers": ["smart", "intelligent", "clever"]
+		},
+		{
+			"prompt": "Do dolphins have [teeth] or [beaks]?",
+			"answers": ["teeth", "beaks"]
+		},
+		{
+			"prompt": "How many eyes do dolphins have?",
+			"answers": ["two", "2", "a pair"]
+		},
+		{
+			"prompt": "Are dolphins usually [friendly] or [aggressive] towards humans?",
+			"answers": ["friendly"]
+		},
+		{
+			"prompt": "Do dolphins communicate with each other?",
+			"answers": ["yes", "they do", "yep"]
+		}
+	]
+}

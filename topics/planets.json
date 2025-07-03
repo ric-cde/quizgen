@@ -1,0 +1,26 @@
+{
+	"topic": "planets",
+	"desc": "Basic questions about the planets in our solar system.",
+	"questions": [
+		{
+			"prompt": "Is Earth a [planet] or a [star]?",
+			"answers": ["planet"]
+		},
+		{
+			"prompt": "Is Mars called the [Red Planet] or the [Blue Planet]?",
+			"answers": ["red planet", "red"]
+		},
+		{
+			"prompt": "How many planets orbit the Sun in our solar system?",
+			"answers": ["eight", "8"]
+		},
+		{
+			"prompt": "Is Jupiter the largest planet in our solar system?",
+			"answers": ["yes", "yep", "sure"]
+		},
+		{
+			"prompt": "Does Venus come [before] or [after] Earth in order from the Sun?",
+			"answers": ["before"]
+		}
+	]
+}

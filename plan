@@ -2,43 +2,93 @@
 
 Title: Emendatio -- Test and hone your knowledge in any field.
 
-Pain point: LLMs can act as a quiz tutor, but there is a lot of friction and inconsistency. Each time you want a quiz, you need to write a detailed prompt with instructions, context (who is the user), source data, etc.
+Pain point: LLMs can act as a quiz tutor, but there is a lot of friction and inconsistency. E.g. every time you want to quiz yourself on a topic, you need to write a detailed prompt with instructions, context (who is the user), source data, etc. And if you do this repeatedly in a single chat, the context window can become clogged.
 
-Description: Emendatio allows you to feed in your field of study, topic, domain, as well as upload source documents. A series of questions or dialogs helps you create a quiz tailored to your needs. Quizzes are generated according to rigorous standards and automated requirements gathering.
+Description: Emendatio allows you to feed in your topic or domain and upload source documents. A series of questions or dialogs helps you create a quiz tailored to your needs. Quizzes are generated according to rigorous standards and automated requirements gathering.
 
 # Tech stack
 
 -   React + Vite
 -   Node/Express?
--   OpenAI API
+-   OpenAI API and/or AI SDK
+-   DB TBA - MongoDB, Supabase, or Postgres. 
 
 # Main Features
 
-1. Quiz designer: capturing user requirements.
+1. Quiz designer: captures what user wants to learn.
 
-2. Generating new/adaptive quiz (question set).
+2. Quiz generator (question set).
 
-3. The quiz (interacting text answers) + scoring user's responses.
+3. Quiz presenter (user interaction, answering questions).
 
-4.
+4. Quiz scorer - rating + showing user responses.
 
-5.
+5. Storing all previous quiz results.
 
 # Functional Requirements
 
 -   Capture user input
     -   Field/domain
-    -   Topics
+    -   Topic(s)
     -   Background knowledge
     -   Goal (e.g. pass Leaving Certificate).
     -   Difficulty?
     -   Upload files
--   Generate a list of questions
+-   Generate a list of questions (store in JSON)
 -   Display questions one by one and prompt an answer
 -   Keep track of user answers
 -   Generate final screen with score
     -   Prompt to retake quiz? Or generate a new one?
     -   v6: system adapts & becomes harder/easier depending on responses
+
+-    Statistics
+    - Display charts showing user performance over time
+
+---
+
+# Structure
+
+## Data
+
+User
+    username,
+    email,
+    id,
+
+Quiz
+    id,
+    questionSets: []
+        questionSetId
+        questions: []
+            questionId
+            question
+            topic
+            sampleAnswer
+        attempts: []
+            attemptId
+            answers:
+                text
+                feedback
+            score
+    domain,
+    topic,
+    purpose,
+    backgroundKnowledge,
+    difficulty: easy | standard | hard,
+    files: []
+        title
+        url
+
+## Components
+TBD
+
+## Pages
+TBD
+
+## Routes
+TBD
+
+---
 
 # Roadmap
 
@@ -97,7 +147,15 @@ Description: Emendatio allows you to feed in your field of study, topic, domain,
 -   Combo UI. Reqs gathering will have selectors/check boxes, but also a prompt box where users can write whatever they want at any point.
 - Eval for how accurate a quiz + scoring is likely to be. I.e. does the LLM actually know a lot about this subject? e.g. if user enters something obscure.
 - ` deterministic evaluation mode (temperature = 0) for scoring and a creative mode for generation.`
+- Spaced repetition.
 
 ## Optional stack elements
 
-- AI SDK
+
+
+    
+# Tutorials
+
+https://codelabs.developers.google.com/cloud-genai
+https://arxiv.org/abs/2503.14662?utm_source=chatgpt.com
+https://www.youtube.com/watch?v=riDzcEQbX6k

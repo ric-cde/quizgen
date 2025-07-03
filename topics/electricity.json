@@ -1,0 +1,33 @@
+{
+	"topic": "electricity",
+	"desc": "Simple questions about basic electricity facts.",
+	"questions": [
+		{
+			"prompt": "Does electricity flow through [wires] or [ropes]?",
+			"answers": ["wires", "wire"]
+		},
+		{
+			"prompt": "What is used to turn electricity on or off in your home?",
+			"answers": [
+				"switch",
+				"a switch",
+				"light switch",
+				"fuse",
+				"fuse box",
+				"switches"
+			]
+		},
+		{
+			"prompt": "Is a battery used to store electricity?",
+			"answers": ["yes", "yep", "it is"]
+		},
+		{
+			"prompt": "What do you call the unit of electric current? [ampere] or [watt]?",
+			"answers": ["ampere", "amp", "amperes", "amps"]
+		},
+		{
+			"prompt": "Does lightning contain electricity?",
+			"answers": ["yes", "it does", "yep", "sure does boss"]
+		}
+	]
+}

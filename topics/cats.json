@@ -1,0 +1,26 @@
+{
+	"topic": "cats",
+	"desc": "Simple questions about domestic cats.",
+	"questions": [
+		{
+			"prompt": "Are cats [mammals] or [reptiles]?",
+			"answers": ["mammals", "mammal"]
+		},
+		{
+			"prompt": "How many legs does a typical cat have?",
+			"answers": ["four", "4"]
+		},
+		{
+			"prompt": "Do cats have [fur] or [scales]?",
+			"answers": ["fur"]
+		},
+		{
+			"prompt": "Are cats usually kept as [pets] or [farm animals]?",
+			"answers": ["pets", "pet"]
+		},
+		{
+			"prompt": "Do cats meow to communicate with humans?",
+			"answers": ["yes", "they do", "yep"]
+		}
+	]
+}

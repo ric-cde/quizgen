@@ -1,0 +1,26 @@
+{
+	"topic": "birds",
+	"desc": "Basic questions about birds and their features.",
+	"questions": [
+		{
+			"prompt": "Do birds have [wings] or [fins]?",
+			"answers": ["wings", "wing"]
+		},
+		{
+			"prompt": "Can all birds fly?",
+			"answers": ["no", "not all", "nope", "nah"]
+		},
+		{
+			"prompt": "How many legs does a bird have?",
+			"answers": ["two", "2", "a pair"]
+		},
+		{
+			"prompt": "Do birds lay [eggs] or [give birth] to live young?",
+			"answers": ["eggs", "egg"]
+		},
+		{
+			"prompt": "Is a penguin a type of bird?",
+			"answers": ["yes", "yep", "it is"]
+		}
+	]
+}
