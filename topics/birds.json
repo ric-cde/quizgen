@@ -20,7 +20,16 @@
 		},
 		{
 			"prompt": "Is a penguin a type of bird?",
-			"answers": ["yes", "yep", "it is"]
+			"answers": [
+				"yes",
+				"yep",
+				"y",
+				"ya",
+				"yeah",
+				"sure",
+				"sure is boss",
+				"it is"
+			]
 		}
 	]
 }

@@ -19,7 +19,16 @@
 		},
 		{
 			"prompt": "Is a battery used to store electricity?",
-			"answers": ["yes", "yep", "it is"]
+			"answers": [
+				"yes",
+				"yep",
+				"y",
+				"ya",
+				"yeah",
+				"sure",
+				"sure does boss",
+				"it is"
+			]
 		},
 		{
 			"prompt": "What do you call the unit of electric current? [ampere] or [watt]?",
@@ -27,7 +36,16 @@
 		},
 		{
 			"prompt": "Does lightning contain electricity?",
-			"answers": ["yes", "it does", "yep", "sure does boss"]
+			"answers": [
+				"yes",
+				"yep",
+				"y",
+				"ya",
+				"yeah",
+				"sure",
+				"sure does boss",
+				"it does"
+			]
 		}
 	]
 }

@@ -20,7 +20,16 @@
 		},
 		{
 			"prompt": "Do cats meow to communicate with humans?",
-			"answers": ["yes", "they do", "yep"]
+			"answers": [
+				"yes",
+				"yep",
+				"y",
+				"ya",
+				"yeah",
+				"sure",
+				"sure do boss",
+				"they do"
+			]
 		}
 	]
 }

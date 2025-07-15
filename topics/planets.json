@@ -16,7 +16,7 @@
 		},
 		{
 			"prompt": "Is Jupiter the largest planet in our solar system?",
-			"answers": ["yes", "yep", "sure"]
+			"answers": ["yes", "yep", "sure", "y", "ya", "yeah", "it is"]
 		},
 		{
 			"prompt": "Does Venus come [before] or [after] Earth in order from the Sun?",
