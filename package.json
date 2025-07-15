@@ -4,7 +4,8 @@
 	"description": "LLM-based quiz generator for any topic",
 	"main": "index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"gcp": "git add . && git commit -m \"update\" && git push"
 	},
 	"author": "Richard Herlihy",
 	"license": "ISC",
