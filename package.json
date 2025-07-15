@@ -5,8 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"gcp": "git add . && git commit && git push",
-		"start": "npm run"
+		"gcp": "git add . && git commit && git push"
 	},
 	"author": "Richard Herlihy",
 	"license": "ISC",
