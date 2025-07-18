@@ -1,11 +1,11 @@
-function sanitiseInput(input) {
+export function sanitiseInput(input) {
 	const userAnswer = input
 		.toLowerCase()
 		.trim()
 		.normalize("NFD")
 		.replace(/[\u0300-\u036f]/g, "")
 		.replace(/[^\w\s\-.,!?]/g, "")
-	
+
 	if (
 		userAnswer.includes("..") ||
 		userAnswer.includes("/") ||
@@ -14,8 +14,19 @@ function sanitiseInput(input) {
 	) {
 		return ""
 	}
-	
+
 	return userAnswer
 }
 
-export default sanitiseInput
+export function countdown(runFunction, delay, text, countdownPhrases) {
+	console.log(text)
+	let i = 0
+	const timer = setInterval(() => {
+		console.log(countdownPhrases[i])
+		i++
+		if (i === 3) {
+			clearInterval(timer)
+			runFunction()
+		}
+	}, delay)
+}
