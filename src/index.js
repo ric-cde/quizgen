@@ -1,5 +1,4 @@
-import { prepareQuizRound, exitQuizgen } from "./app/quiz-engine.js"
-import { loadTopicNames } from "./io/file-manager.js"
+import { start, exitQuizgen } from "./app/quiz-engine.js"
 import { closeReadLine } from "./io/cli.js"
 
 process.on("SIGINT", () => {
@@ -10,22 +9,7 @@ process.on("SIGINT", () => {
 })
 
 const main = async () => {
-	try {
-		const topics = await loadTopicNames()
-
-		if (topics.length > 0) {
-			console.log("Topics loaded.\n")
-			console.log("Welcome to quiz generator! \n")
-			await prepareQuizRound(topics)
-		} else {
-			console.log("No topics found.")
-			process.exit(0)
-		}
-	} catch (err) {
-		console.error(err)
-		console.log("Could not load topics.")
-		process.exit(0)
-	}
+	await start()
 }
 
 console.clear()
@@ -54,7 +38,7 @@ main()
 
 // store responses + scoring in separate object/array (not on questions object), e.g. quizSession {quizId, completed (true), correct, total, score%}. When exiting, generate report of how user did across all rounds [✔️]
 
-// split functions into modules/files []
+// split functions into modules/files [✔️]
 
 // program makes request to openAI API to generate JSON question set (10 questions), then usual flow (user chooses how many), etc. []
 

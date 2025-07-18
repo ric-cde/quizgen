@@ -1,22 +1,29 @@
 import { loadTopicFromFile, writeTopicToFile } from "../io/file-manager.js"
 import { promptUser } from "../io/cli.js"
-
+import {
+	ERROR_MESSAGES,
+	SUCCESS_MESSAGES,
+	PROMPTS,
+	CUSTOM_TOPIC_TEMPLATE,
+	QUIZ_DEFAULTS,
+} from "../utils/constants.js"
 
 export async function requestTopic(topics) {
-	const userTopic = await promptUser(
-		`Which one would you like to test your mettle on? \n`
-	)
+	const userTopic = await promptUser(PROMPTS.TOPIC_SELECTION)
 	if (userTopic === "custom") {
 		return generateCustomTopic(topics)
 	} else if (topics.includes(userTopic)) {
 		return userTopic
 	} else {
-		console.log("Topic not found. Try again.")
+		console.log(ERROR_MESSAGES.TOPIC_NOT_FOUND)
 		return await requestTopic(topics)
 	}
 }
 
 export async function loadQuestions(topic) {
+	if (!topic || typeof topic !== "string") {
+		throw new Error("Topic must be a non-empty string")
+	}
 	try {
 		const questionSet = await loadTopicFromFile(topic)
 
@@ -25,7 +32,7 @@ export async function loadQuestions(topic) {
 			!Array.isArray(questionSet.questions) ||
 			questionSet.questions.length < 1
 		) {
-			console.log("No questions found.")
+			console.log(ERROR_MESSAGES.NO_QUESTIONS)
 			return null
 		}
 		return questionSet
@@ -46,38 +53,28 @@ export async function selectRandomQuestions(questions) {
 }
 
 export async function generateCustomTopic(topics) {
-	const customTopic = await promptUser("What custom topic would you like? ")
+	const customTopic = await promptUser(PROMPTS.CUSTOM_TOPIC)
 	if (!customTopic) {
-		console.log("Invalid topic name. Please use only letters.")
+		console.log(ERROR_MESSAGES.INVALID_TOPIC_NAME)
 		return await generateCustomTopic(topics)
 	}
 	if (!topics.includes(customTopic)) {
 		const questionSet = {
 			topic: customTopic,
-			desc: "Custom questions.",
-			questions: [
-				{
-					prompt: "sample custom question?",
-					answers: ["yes", "no"],
-				},
-				{
-					prompt: "another sample?",
-					answers: ["yes", "no"],
-				},
-			],
+			...CUSTOM_TOPIC_TEMPLATE,
 		}
 
 		try {
 			await saveTopic(customTopic, questionSet)
 			topics.push(customTopic)
-			console.log(`${customTopic} added to library.`)
+			console.log(SUCCESS_MESSAGES.TOPIC_ADDED(customTopic))
 			return customTopic
 		} catch (err) {
-			console.log("error:", err)
+			console.log("Error:", err)
 			return await generateCustomTopic(topics)
 		}
 	} else {
-		console.log("Topic already exists. Try another.")
+		console.log(ERROR_MESSAGES.TOPIC_EXISTS)
 		return await generateCustomTopic(topics)
 	}
 }
@@ -87,20 +84,18 @@ async function saveTopic(customTopic, questionSet) {
 }
 
 async function askQuestionCount(questions) {
-	const count = await promptUser(
-		`How many questions would you like to answer? Max: (${questions.length}) \n`
-	)
+	const count = await promptUser(PROMPTS.QUESTION_COUNT(questions.length))
+	const numCount = parseInt(count.trim())
 
 	if (
-		count.trim() !== "" &&
-		!isNaN(Number(count)) &&
-		count <= questions.length &&
-		count > 0
+		!isNaN(numCount) &&
+		numCount <= questions.length &&
+		numCount >= QUIZ_DEFAULTS.MIN_QUESTIONS
 	) {
-		return parseInt(count)
+		return numCount
 	} else {
 		console.log(
-			`Error: must choose a value between 1 and ${questions.length}`
+			`Error: must choose a value between ${QUIZ_DEFAULTS.MIN_QUESTIONS} and ${questions.length}`
 		)
 		return await askQuestionCount(questions)
 	}

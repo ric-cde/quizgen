@@ -24,7 +24,7 @@ export function countdown(runFunction, delay, text, countdownPhrases) {
 	const timer = setInterval(() => {
 		console.log(countdownPhrases[i])
 		i++
-		if (i === 3) {
+		if (i >= countdownPhrases.length) {
 			clearInterval(timer)
 			runFunction()
 		}

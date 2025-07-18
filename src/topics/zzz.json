@@ -1,0 +1,20 @@
+{
+  "topic": "zzz",
+  "desc": "Custom questions.",
+  "questions": [
+    {
+      "prompt": "sample custom question?",
+      "answers": [
+        "yes",
+        "no"
+      ]
+    },
+    {
+      "prompt": "another sample?",
+      "answers": [
+        "yes",
+        "no"
+      ]
+    }
+  ]
+}
