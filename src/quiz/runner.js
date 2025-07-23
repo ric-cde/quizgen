@@ -1,10 +1,6 @@
 import { calcQuizScore } from "./scoring.js"
 import { promptUser } from "../io/cli.js"
-import {
-	POSITIVE_RESPONSES,
-	SUCCESS_MESSAGES,
-	PROMPTS,
-} from "../utils/constants.js"
+import { POSITIVE_RESPONSES, PROMPTS } from "../utils/constants.js"
 
 export async function runQuestionSet(questionSet, quizSessions) {
 	const quizSessionId = generateNextSessionid(quizSessions)
@@ -63,12 +59,26 @@ async function askQuestion(question) {
 	return { userAnswer, correct }
 }
 
-function checkAnswer(question, userAnswer) {
-	if (question.answers.includes(userAnswer)) {
-		console.log(SUCCESS_MESSAGES.CORRECT_ANSWER)
-		return true
+function checkAnswer({ answers }, userAnswer) {
+	const isCorrect = answers.map((a) => a.toLowerCase()).includes(userAnswer)
+	const isYesNo = ["yes", "no"].some((str) => answers.includes(str))
+	let text = `${isCorrect ? "Correct!\n" : "Wrong!\n"}`
+
+	if (isCorrect) {
+		if (answers.length > 1 && !isYesNo) {
+			const otherAnswers = answers.filter(
+				(answer) => userAnswer !== answer
+			)
+			text += "Other correct answers: [" + otherAnswers.join("], [") + "]"
+		}
 	} else {
-		console.log(SUCCESS_MESSAGES.WRONG_ANSWER)
-		return false
+		if (answers.length > 1 && !isYesNo) {
+			text += "Correct answers: [" + answers.join("], [") + "]"
+		} else if (answers.length === 1) {
+			text += "Correct answer: [" + answers[0] + "]"
+		}
 	}
+
+	console.log(text)
+	return isCorrect
 }

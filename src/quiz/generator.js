@@ -1,5 +1,6 @@
 import { loadTopicFromFile, writeTopicToFile } from "../io/file-manager.js"
 import { promptUser } from "../io/cli.js"
+import { generateAiQuiz } from "../services/llm-service.js"
 import {
 	ERROR_MESSAGES,
 	SUCCESS_MESSAGES,
@@ -54,27 +55,29 @@ export async function selectRandomQuestions(questions) {
 
 export async function generateCustomTopic(topics) {
 	const customTopic = await promptUser(PROMPTS.CUSTOM_TOPIC)
+
 	if (!customTopic) {
 		console.log(ERROR_MESSAGES.INVALID_TOPIC_NAME)
 		return await generateCustomTopic(topics)
 	}
-	if (!topics.includes(customTopic)) {
-		const questionSet = {
-			topic: customTopic,
-			...CUSTOM_TOPIC_TEMPLATE,
-		}
 
-		try {
-			await saveTopic(customTopic, questionSet)
-			topics.push(customTopic)
-			console.log(SUCCESS_MESSAGES.TOPIC_ADDED(customTopic))
-			return customTopic
-		} catch (err) {
-			console.log("Error:", err)
-			return await generateCustomTopic(topics)
-		}
-	} else {
+	if (topics.includes(customTopic)) {
 		console.log(ERROR_MESSAGES.TOPIC_EXISTS)
+		return await generateCustomTopic(topics)
+	}
+
+	try {
+		console.log("Generating new quiz about:", customTopic)
+		const questionSet = await generateAiQuiz(customTopic)
+
+		questionSet.topic = customTopic
+
+		await saveTopic(customTopic, questionSet)
+		topics.push(customTopic)
+		console.log(SUCCESS_MESSAGES.TOPIC_ADDED(customTopic))
+		return customTopic
+	} catch (err) {
+		console.log("Error:", err)
 		return await generateCustomTopic(topics)
 	}
 }

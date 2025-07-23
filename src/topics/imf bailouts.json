@@ -1,0 +1,77 @@
+{
+  "topic": "imf bailouts",
+  "desc": "Challenging questions about the International Monetary Fund (IMF) bailouts, focusing on their purpose, history, and impact.",
+  "questions": [
+    {
+      "prompt": "What does IMF stand for in the context of international finance?",
+      "answers": [
+        "international monetary fund"
+      ]
+    },
+    {
+      "prompt": "Which Asian country received a major IMF bailout during the 1997 financial crisis?",
+      "answers": [
+        "south korea",
+        "korea"
+      ]
+    },
+    {
+      "prompt": "True or false: IMF bailouts typically require countries to implement economic reforms as a condition.",
+      "answers": [
+        "true",
+        "yes",
+        "yep",
+        "correct"
+      ]
+    },
+    {
+      "prompt": "During bailouts, the IMF often recommends [austerity measures], [increased government spending], or [currency devaluation]. Which one is usually recommended?",
+      "answers": [
+        "austerity measures"
+      ]
+    },
+    {
+      "prompt": "What is the primary goal of an IMF bailout?",
+      "answers": [
+        "stabilize the country's economy",
+        "help the country pay its debts",
+        "restore investor confidence"
+      ]
+    },
+    {
+      "prompt": "Which European country was the first to request an IMF bailout during the Eurozone debt crisis?",
+      "answers": [
+        "greece"
+      ]
+    },
+    {
+      "prompt": "The IMF was created in which year following which major global event?",
+      "answers": [
+        "1945",
+        "second world war",
+        "world war ii"
+      ]
+    },
+    {
+      "prompt": "Which term describes restrictions imposed by the IMF on a country's fiscal policy during a bailout to reduce budget deficits?",
+      "answers": [
+        "conditionality"
+      ]
+    },
+    {
+      "prompt": "True or false: All countries that receive IMF bailouts fully recover without lingering economic challenges.",
+      "answers": [
+        "false",
+        "no",
+        "nope",
+        "wrong"
+      ]
+    },
+    {
+      "prompt": "During the 2008 global financial crisis, which large European country was notably aided by the IMF bailout program?",
+      "answers": [
+        "ireland"
+      ]
+    }
+  ]
+}

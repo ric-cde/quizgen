@@ -1,4 +1,4 @@
-import { start, exitQuizgen } from "./app/quiz-engine.js"
+import { start, exitQuizgen } from "./quiz/engine.js"
 import { closeReadLine } from "./io/cli.js"
 
 process.on("SIGINT", () => {
@@ -40,10 +40,22 @@ main()
 
 // split functions into modules/files [✔️]
 
-// program makes request to openAI API to generate JSON question set (10 questions), then usual flow (user chooses how many), etc. []
+// program makes request to openAI API to generate JSON question set (10 questions), then usual flow (user chooses how many), etc. [✔️]
+
+// transform answer array to lower-case [✔️]
+
+// Ask user: how many questions they'd like to generate. Update llm-service to accommodate
+
+// When selecting quiz, ask user: do existing questionSet(s) from file or generate new? If generating new, how many? (possibly combined function w/ above)
+
+// After quiz, ask user: would you like to do topic again? (then existing Q's or generate new - combined with previous)?
+
+// Generating additional Q's: New request made, questions get appended to answer array). []
+
+// Structured Outputs conformity (JSON schema object): https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses []
+
+// questions array converted to questionSet array of question arrays.
 
 // Questions can be stored in memory or written to .json file. (Perhaps ask user afterwards if they want to save to file). []
 
 // LLM logic: generate JSON according to template. Show examples. Second step to check + verify questions. []
-
-// rl.close() ??? []

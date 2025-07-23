@@ -1,0 +1,75 @@
+{
+  "topic": "trivia about the company openai",
+  "desc": "Challenging trivia questions about the company OpenAI, its history, products, and influence.",
+  "questions": [
+    {
+      "prompt": "In which year was OpenAI founded?",
+      "answers": [
+        "2015"
+      ]
+    },
+    {
+      "prompt": "Who was not one of the original founders of OpenAI: elon musk, sam altman, bill gates, or greg brockman?",
+      "answers": [
+        "bill gates"
+      ]
+    },
+    {
+      "prompt": "What is the name of OpenAI’s language model that reached widespread recognition in 2020 for generating human-like text?",
+      "answers": [
+        "gpt-3",
+        "gpt3"
+      ]
+    },
+    {
+      "prompt": "OpenAI initially started as a [nonprofit], [for-profit], or [government agency] organization?",
+      "answers": [
+        "nonprofit",
+        "not-for-profit"
+      ]
+    },
+    {
+      "prompt": "Which major technology company announced a multibillion-dollar investment in OpenAI in 2019?",
+      "answers": [
+        "microsoft"
+      ]
+    },
+    {
+      "prompt": "OpenAI created an AI capable of playing complex video games, including the classic game Dota 2. True or false?",
+      "answers": [
+        "true",
+        "yes",
+        "yep"
+      ]
+    },
+    {
+      "prompt": "What does the acronym ‘GPT’ in OpenAI’s models stand for?",
+      "answers": [
+        "generative pretrained transformer",
+        "generative pre-trained transformer"
+      ]
+    },
+    {
+      "prompt": "In 2021, OpenAI released a multimodal AI called DALL·E that generates images from text. Is this statement correct?",
+      "answers": [
+        "yes",
+        "true"
+      ]
+    },
+    {
+      "prompt": "OpenAI’s research and technology primarily focus on artificial intelligence in which domain?",
+      "answers": [
+        "machine learning",
+        "ai",
+        "artificial intelligence"
+      ]
+    },
+    {
+      "prompt": "As of mid-2025, OpenAI operates with a capped-profit structure, combining goals of profit and public benefit. Yes or no?",
+      "answers": [
+        "yes",
+        "correct"
+      ]
+    }
+  ]
+}

@@ -1,9 +1,9 @@
-import { askForReplay, runQuestionSet } from "./quiz-runner.js"
+import { askForReplay, runQuestionSet } from "./runner.js"
 import {
 	requestTopic,
 	loadQuestions,
 	selectRandomQuestions,
-} from "./quiz-generator.js"
+} from "./generator.js"
 import { loadTopicNames } from "../io/file-manager.js"
 import { getAllQuizScores, getOverallCorrect } from "./scoring.js"
 import { closeReadLine } from "../io/cli.js"

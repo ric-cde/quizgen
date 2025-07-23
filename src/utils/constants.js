@@ -2,7 +2,7 @@
 export const POSITIVE_RESPONSES = ["y", "yes", "ya", "sure", "ok"]
 
 // File paths
-export const TOPICS_DIR = "./topics"
+export const TOPICS_DIR = "./src/topics"
 
 // Quiz config
 export const QUIZ_DEFAULTS = {
@@ -31,8 +31,6 @@ export const SUCCESS_MESSAGES = {
 	TOPICS_LOADED: "Topics loaded.\n",
 	WELCOME: "Welcome to quiz generator! \n",
 	TOPIC_ADDED: (topic) => `${topic} added to library.`,
-	CORRECT_ANSWER: "Correct!\n",
-	WRONG_ANSWER: "Wrong. :(\n",
 }
 
 // Prompts

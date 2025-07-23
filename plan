@@ -142,6 +142,8 @@ TBD
 
 ## Experimental feature musings (ignore for now)
 
+-   Dispute button between each answer validation: if user thinks their answer was correct, they click dispute. LLM call checks to see if answer could also work.
+    i.e. "van dijk", "virgil van dijk". User writes "vvd". Call 4.1-nano `Could ${userAnswer} be accepted as a correct answer in a quiz for ${question}. Other correct answers: ${}. Topic is ${topic}.
 -   When user inputs information, an LLM call rewrites prompt. (Goal: "im doin my leaving cert" => "User is studying for their state-level secondary school exams in Ireland, called the Leaving Certificate). And e.g. further information could be pulled in, e.g. a chained prompt where the AI retrieves a paragraph describing the Leaving Certificate.
 -   Multiple calls which evaluate and re-evaluate the data, ultimately transforming it into a system prompt for the quiz.
 -   Way of fetching/generating images for questions.
@@ -155,6 +157,8 @@ TBD
 -   Eval for how accurate a quiz + scoring is likely to be. I.e. does the LLM actually know a lot about this subject? e.g. if user enters something obscure.
 -   ` deterministic evaluation mode (temperature = 0) for scoring and a creative mode for generation.`
 -   Spaced repetition.
+-   Spell check ran against answers. (Google-style - e.g. you enter "van djik" and a hyperlink appears for "did you mean van dijk?")
+-   LLM call first generates "chain-of-thought" text about what kinds of questions would be good to challenge user on topic X. Then next call (or field) is the JSON response.
 
 ## Optional stack elements
 
