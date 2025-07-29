@@ -1,0 +1,15 @@
+{
+  "topic": "dogs",
+  "desc": "Advanced questions testing detailed knowledge about dogs, including breeds, biology, and behavior.",
+  "questions": [
+    {
+      "prompt": "Which gene is primarily responsible for the coat color variation in domestic dogs?",
+      "answers": [
+        "mc1r",
+        "melanocortin 1 receptor",
+        "melanocortin-1 receptor"
+      ],
+      "questionSetId": 0
+    }
+  ]
+}

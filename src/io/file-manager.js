@@ -19,7 +19,7 @@ export async function loadTopicFromFile(topic) {
 		const questionSet = JSON.parse(data)
 		return questionSet
 	} catch (error) {
-		throw new Error(`Failed to load topic ${topic}: ${error.message}`)
+		throw new Error(`Failed to max topic ${topic}: ${error.message}`)
 	}
 }
 

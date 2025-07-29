@@ -19,9 +19,10 @@ export const COUNTDOWN_CONFIG = {
 // Error messages
 export const ERROR_MESSAGES = {
 	NO_QUESTIONS: "No questions found.",
-	TOPIC_NOT_FOUND: "Topic not found. Try again.",
+	TOPIC_NOT_FOUND:
+		"Topic not found. Enter an existing topic from the list or choose [custom].",
 	INVALID_TOPIC_NAME: "Invalid topic name. Please use only letters.",
-	TOPIC_EXISTS: "Topic already exists. Try another.",
+
 	LOAD_TOPICS_FAILED: "Could not load topics.",
 	NO_TOPICS_AVAILABLE: "No topics found.",
 }
@@ -35,25 +36,16 @@ export const SUCCESS_MESSAGES = {
 
 // Prompts
 export const PROMPTS = {
-	TOPIC_SELECTION: "Which one would you like to test your mettle on? \n",
-	CUSTOM_TOPIC: "What custom topic would you like? ",
+	TOPIC_SELECTION: "Which one would you like to test your mettle on?\n",
+	TOPIC_EXISTS: "Use [existing] questions or generate [new] questions?\n",
+	CUSTOM_TOPIC: "What custom topic would you like?\n",
 	QUESTION_COUNT: (max) =>
-		`How many questions would you like to answer? Max: (${max}) \n`,
-	REPLAY: "Would you like to play another round? [y] or [n] ",
+		`How many questions would you like? Max: (${max})\n`,
+	REPLAY: `Play again? Choose [1] or [2]: \n
+	[1] Same topic again. [2] Choose a different topic.\n`,
 	QUESTION_ANSWER: (prompt) => `${prompt} `,
-}
-
-// Quiz session defaults
-export const CUSTOM_TOPIC_TEMPLATE = {
-	desc: "Custom questions.",
-	questions: [
-		{
-			prompt: "sample custom question?",
-			answers: ["yes", "no"],
-		},
-		{
-			prompt: "another sample?",
-			answers: ["yes", "no"],
-		},
-	],
+	QUESTION_DIFFICULTY: `How difficult should the questions be? Examples:\n
+		* [entry-level], [easy], [beginner], [elementary school]\n
+		* [intermediate], [skilled], [standard], [12th-grade]\n
+		* [expert], [hard], [advanced], [PhD-level]\n`,
 }

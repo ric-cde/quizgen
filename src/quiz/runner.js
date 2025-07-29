@@ -20,11 +20,15 @@ export async function runQuestionSet(questionSet, quizSessions) {
 	Object.assign(quizSession, scoreData)
 
 	console.log(`You scored: ${quizSession.result}!`)
+
+	// TODO: future update logic for permanent scoring, etc. on questions array
+
+	return await askForReplay()
 }
 
-export async function askForReplay() {
+export async function askForReplay(count) {
 	const response = await promptUser(PROMPTS.REPLAY)
-	return POSITIVE_RESPONSES.includes(response)
+	return response
 }
 
 function createQuizSession(questionSet, quizSessionId) {

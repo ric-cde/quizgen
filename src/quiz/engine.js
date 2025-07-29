@@ -1,14 +1,17 @@
 import { askForReplay, runQuestionSet } from "./runner.js"
 import {
-	requestTopic,
-	loadQuestions,
+	requestTopicChoice,
+	loadQuestionSet,
+	generateCustomTopic,
 	selectRandomQuestions,
+	askQuestionCount,
 } from "./generator.js"
+import { promptUser, closeReadLine } from "../io/cli.js"
 import { loadTopicNames } from "../io/file-manager.js"
 import { getAllQuizScores, getOverallCorrect } from "./scoring.js"
-import { closeReadLine } from "../io/cli.js"
 import { countdown } from "../utils/helpers.js"
 import {
+	PROMPTS,
 	SUCCESS_MESSAGES,
 	ERROR_MESSAGES,
 	COUNTDOWN_CONFIG,
@@ -45,36 +48,96 @@ export async function prepareQuizRound(topics) {
 	console.log(
 		`The following topics are available:\n\n${topics.join("\n")}\ncustom\n`
 	)
-	const topic = await requestTopic(topics)
-	console.log(`\nGreat! Get ready to dive deep on ${topic}.`)
 
-	const questionSet = await loadQuestions(topic)
+	let questionSet = await getTopicAndQuestionSet(topics)
+
+	// console.log("questionSet is:", questionSet)
 	if (!questionSet) {
-		console.log("Error. Restarting...")
+		console.log(
+			"Error loading questions for this topic. Please try a different topic."
+		)
 		await prepareQuizRound(topics)
 		return
 	}
 
-	questionSet.questions = await selectRandomQuestions([
-		...questionSet.questions,
-	])
+	console.log(`\nGreat! Get ready to dive deep on ${questionSet.topic}.`)
 
 	countdown(
 		async () => {
-			await runQuestionSet(questionSet, quizSessions)
+			while (true) {
+				// 1 = same topic, 2 = another topic
+				const replayChoice = await runQuestionSet(
+					questionSet,
+					quizSessions
+				)
 
-			if (await askForReplay()) {
-				console.log("Perfect, restarting the quiz...")
-				await prepareQuizRound(topics)
-			} else {
-				closeReadLine()
-				exitQuizgen()
+				switch (replayChoice) {
+					case "1":
+						console.log("Perfect, restarting the quiz...")
+						questionSet = await fetchQuestionSet(
+							topics,
+							questionSet.topic
+						)
+						break
+					case "2":
+						await prepareQuizRound(topics)
+						return
+					default:
+						// exit logic
+						closeReadLine()
+						exitQuizgen()
+						return
+				}
 			}
 		},
 		QUIZ_DEFAULTS.COUNTDOWN_DELAY,
 		COUNTDOWN_CONFIG.MESSAGE,
 		COUNTDOWN_CONFIG.PHRASES
 	)
+}
+
+async function getTopicAndQuestionSet(topics) {
+	let topicChoice = await requestTopicChoice(topics)
+
+	if (topicChoice === "custom") {
+		// fetch user custom topic here
+		topicChoice = await promptUser(PROMPTS.CUSTOM_TOPIC)
+	}
+
+	const questionSet = await fetchQuestionSet(topics, topicChoice)
+	return questionSet
+}
+
+async function fetchQuestionSet(topics, topicChoice) {
+	const topicAlreadyExists = topics.includes(topicChoice.toLowerCase())
+	let questionSet
+	let generateNew = !topicAlreadyExists
+
+	if (topicAlreadyExists) {
+		// ask user if they want new or existing questions
+		const newOrExistingChoice = await promptUser(PROMPTS.TOPIC_EXISTS)
+		if (newOrExistingChoice === "new") {
+			generateNew = true
+		}
+	}
+
+	if (generateNew) {
+		questionSet = await generateCustomTopic(topics, topicChoice)
+	} else if (topicAlreadyExists) {
+		const fullQuestionSet = await loadQuestionSet(topicChoice)
+		const numberOfQuestions = await askQuestionCount(
+			fullQuestionSet.questions.length
+		)
+
+		questionSet = {
+			...fullQuestionSet,
+			questions: selectRandomQuestions(
+				fullQuestionSet.questions,
+				numberOfQuestions
+			),
+		}
+	}
+	return questionSet
 }
 
 export function exitQuizgen() {

@@ -1,0 +1,44 @@
+{
+  "topic": "tigers",
+  "desc": "Advanced questions exploring the biology, behavior, and conservation of tigers.",
+  "questions": [
+    {
+      "prompt": "What is the primary habitat type for the Siberian tiger?",
+      "answers": [
+        "boreal forest",
+        "taiga",
+        "mixed coniferous forest"
+      ],
+      "questionSetId": 0
+    },
+    {
+      "prompt": "Which prey species constitutes a significant portion of the diet for Bengal tigers in the Sundarbans mangrove forest?",
+      "answers": [
+        "chital",
+        "spotted deer",
+        "wild boar"
+      ],
+      "questionSetId": 0
+    },
+    {
+      "prompt": "True or False: Tigers are solitary animals that mark their territories using scent marking and vocalizations.",
+      "answers": [
+        "true",
+        "yes",
+        "correct",
+        "yep"
+      ],
+      "questionSetId": 0
+    },
+    {
+      "prompt": "Which of the following subspecies of tiger is considered the largest: [bengal], [siberian], or [sumatran]?",
+      "answers": [
+        "siberian",
+        "siberian tiger",
+        "amur tiger"
+      ],
+      "questionSetId": 1,
+      "difficulty": 5
+    }
+  ]
+}

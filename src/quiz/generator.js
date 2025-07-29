@@ -1,27 +1,25 @@
 import { loadTopicFromFile, writeTopicToFile } from "../io/file-manager.js"
 import { promptUser } from "../io/cli.js"
-import { generateAiQuiz } from "../services/llm-service.js"
+import { generateQuestionSet } from "../services/llm-service.js"
 import {
 	ERROR_MESSAGES,
 	SUCCESS_MESSAGES,
 	PROMPTS,
-	CUSTOM_TOPIC_TEMPLATE,
 	QUIZ_DEFAULTS,
 } from "../utils/constants.js"
 
-export async function requestTopic(topics) {
+export async function requestTopicChoice(topics) {
 	const userTopic = await promptUser(PROMPTS.TOPIC_SELECTION)
-	if (userTopic === "custom") {
-		return generateCustomTopic(topics)
-	} else if (topics.includes(userTopic)) {
+
+	if (userTopic === "custom" || topics.includes(userTopic)) {
 		return userTopic
 	} else {
 		console.log(ERROR_MESSAGES.TOPIC_NOT_FOUND)
-		return await requestTopic(topics)
+		return await requestTopicChoice(topics)
 	}
 }
 
-export async function loadQuestions(topic) {
+export async function loadQuestionSet(topic) {
 	if (!topic || typeof topic !== "string") {
 		throw new Error("Topic must be a non-empty string")
 	}
@@ -36,6 +34,7 @@ export async function loadQuestions(topic) {
 			console.log(ERROR_MESSAGES.NO_QUESTIONS)
 			return null
 		}
+
 		return questionSet
 	} catch (err) {
 		console.error("Error:", err)
@@ -43,9 +42,7 @@ export async function loadQuestions(topic) {
 	}
 }
 
-export async function selectRandomQuestions(questions) {
-	const numberOfQuestions = await askQuestionCount(questions)
-
+export function selectRandomQuestions(questions, numberOfQuestions = 5) {
 	questions = questions
 		.sort(() => Math.random() - 0.5)
 		.slice(0, numberOfQuestions)
@@ -53,32 +50,71 @@ export async function selectRandomQuestions(questions) {
 	return questions
 }
 
-export async function generateCustomTopic(topics) {
-	const customTopic = await promptUser(PROMPTS.CUSTOM_TOPIC)
+export async function generateCustomTopic(topics, customTopic) {
+	const topicAlreadyExists = topics.includes(customTopic.toLowerCase())
+	let lastQuestionSetId = -1
+	let questionSet = {}
+
+	// Does the topic already exist? Ask user if they want extra questions
+	if (topicAlreadyExists) {
+		questionSet = { ...(await loadQuestionSet(customTopic)) }
+		const existingQuestions = questionSet.questions || []
+
+		lastQuestionSetId =
+			existingQuestions.length > 0
+				? existingQuestions[existingQuestions.length - 1]
+						.questionSetId || 0
+				: 0
+	}
 
 	if (!customTopic) {
 		console.log(ERROR_MESSAGES.INVALID_TOPIC_NAME)
-		return await generateCustomTopic(topics)
+		return null
 	}
-
-	if (topics.includes(customTopic)) {
-		console.log(ERROR_MESSAGES.TOPIC_EXISTS)
-		return await generateCustomTopic(topics)
-	}
+	const numberOfQuestions = await askQuestionCount(10)
+	const difficulty = await promptUser(PROMPTS.QUESTION_DIFFICULTY)
 
 	try {
-		console.log("Generating new quiz about:", customTopic)
-		const questionSet = await generateAiQuiz(customTopic)
+		console.log(
+			`Generating new question set about: ${customTopic} (questions: ${numberOfQuestions}, difficulty: ${difficulty})`
+		)
 
-		questionSet.topic = customTopic
+		const newQuestionSet = await generateQuestionSet(
+			customTopic,
+			numberOfQuestions,
+			difficulty
+		)
 
-		await saveTopic(customTopic, questionSet)
-		topics.push(customTopic)
+		const newQuestions = newQuestionSet.questions.map((question) => {
+			question.questionSetId = lastQuestionSetId + 1
+			question.difficulty = newQuestionSet.difficulty
+			question.createdAt = new Date()
+			return question
+		})
+
+		newQuestionSet.questions = newQuestions
+
+		const existingQuestions = questionSet.questions || []
+
+		const mergedQuestionSet = {
+			topic: questionSet.topic || newQuestionSet.topic,
+			desc: questionSet.desc || newQuestionSet.desc,
+			questions: [...existingQuestions, ...newQuestions],
+		}
+
+		// save merged version of existing and new question sets
+		await saveTopic(customTopic, mergedQuestionSet)
+
+		if (!topicAlreadyExists) {
+			topics.push(customTopic)
+		}
 		console.log(SUCCESS_MESSAGES.TOPIC_ADDED(customTopic))
-		return customTopic
+
+		// return only the new question set for this round
+		return newQuestionSet
 	} catch (err) {
 		console.log("Error:", err)
-		return await generateCustomTopic(topics)
+		return null
 	}
 }
 
@@ -86,20 +122,14 @@ async function saveTopic(customTopic, questionSet) {
 	await writeTopicToFile(customTopic, questionSet)
 }
 
-async function askQuestionCount(questions) {
-	const count = await promptUser(PROMPTS.QUESTION_COUNT(questions.length))
+export async function askQuestionCount(max, min = QUIZ_DEFAULTS.MIN_QUESTIONS) {
+	const count = await promptUser(PROMPTS.QUESTION_COUNT(max))
 	const numCount = parseInt(count.trim())
 
-	if (
-		!isNaN(numCount) &&
-		numCount <= questions.length &&
-		numCount >= QUIZ_DEFAULTS.MIN_QUESTIONS
-	) {
+	if (!isNaN(numCount) && numCount <= max && numCount >= min) {
 		return numCount
 	} else {
-		console.log(
-			`Error: must choose a value between ${QUIZ_DEFAULTS.MIN_QUESTIONS} and ${questions.length}`
-		)
-		return await askQuestionCount(questions)
+		console.log(`Error: must choose a value between ${min} and ${max}`)
+		return await askQuestionCount(max)
 	}
 }

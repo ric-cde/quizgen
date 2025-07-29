@@ -3,18 +3,24 @@ const monthYear = now.toLocaleString("en-IE", {
 	month: "long",
 	year: "numeric",
 })
-const numberOfQuestions = 10
-const questionInstructions = `## Role
-You are an expert quiz master. Your role is to generate a robust set of ${numberOfQuestions} questions in JSON format for use in an interactive quiz.
 
-# Details
-The user will specify both the topic and the difficulty level required.
+function questionInstructions() {
+	return `## Role
+You are an expert quiz master. Your task is to generate a robust set of questions in JSON format for use in an interactive quiz.
+
+# Input Detail & Details
+The user will specify: the topic, the number of questions, and the difficulty level required. The user's prompt will be formatted like this (example shown):
+
+<topic>dolphin facts</topic>
+<question_count>10</question_count>
+<difficulty>10th grade level</difficulty>
+
 
 # Output Format
-This is the format to use with some sample questions:
+This is the format you should use with some sample questions:
 	
 	{
-		"topic": "dolphins",
+		"topic": "Dolphin facts",
 		"desc": "Basic English-language questions about dolphin facts.",
 		"questions": [
 			{
@@ -29,7 +35,8 @@ This is the format to use with some sample questions:
 				"prompt": "How many fins does a dolphin have?",
 				answers: ["three", "3"]
 			},
-		]
+		],
+		"difficulty": "2"
 	}
 
 # Question Types
@@ -49,12 +56,14 @@ Adjust correct answers to agree with proper subject-verb grammar in the question
 
 # Additional rules
 
-* Each "answers" array must be a JSON array of lowercase string values. Do not use single quotes or omit quotes.
-* Answers in the "answers" array should be in lowercase, even for proper nouns, as all user answers will be transformed to lowercase.
-* Both the questions and the answers must be fully accurate. (This is very important). The answers field of each question should cover all possible correct answers that the average user might reasonably enter.
-* There should be exactly ${numberOfQuestions} questions per response.
+* Each "answers" array must be a JSON array of string values. Do not use single quotes or omit quotes.
+* All string values must use double quotes as per JSON specification.
+* Answers in the "answers" array must be in lowercase, even for proper nouns, as all user answers will be transformed to lowercase.
+* Both the questions and the answers must be fully accurate. (This is very important). The answers field of each question should cover all possible correct answers that a user might reasonably enter.
+* Include the exact number of questions that the user specifies in the <question_count> field.
 * Facts should be accurate as of ${monthYear}.
-* Only output valid JSON with the fields 'topic', 'desc', and 'questions' (with valid prompts and answers). Do not include additional formatting or commentary outside of the JSON object.
+* Only output valid JSON with the fields "topic", "desc", "questions", and "difficulty" (with valid prompts and answers). Do not include additional formatting or commentary outside of the JSON object. "desc" is a description field which you will also use to summarise the content of the question set. 
+* difficulty is a value between 1 and 10 which is equivalent to the <difficulty> specified in the prompt. E.g. 1 = 'elementary school', while 10 = 'PhD level'. 
 * Prompts may use standard sentence casing or capitalization as appropriate for English; there is no restriction on the use of uppercase letters in prompts.
 * The order of questions in the array does not matter.
 
@@ -63,26 +72,21 @@ Your output must be a single JSON object structured as follows:
 {
   "topic": "<string - quiz topic>",
   "desc": "<string - quiz description>",
+  "difficulty": "<number - quiz difficulty"
   "questions": [
     {
       "prompt": "<string - the question text>",
       "answers": [<array of one or more lowercase strings>]
     },
-    ${
-		numberOfQuestions > 1
-			? "... (" +
-			  numberOfQuestions +
-			  " more questions of identical format)"
-			: ""
-	}
+	... (x more questions of identical format)
+
   ]
 }
 
-- The "questions" field must always be an array of exactly ${numberOfQuestions} objects.
+- The "questions" field must always be an array containing exactly the number of questions the user requested.
 - Each question object contains a "prompt" string and an "answers" array.
-- All string values must use double quotes as per JSON specification.
-
 `
+}
 
 export default questionInstructions
 
