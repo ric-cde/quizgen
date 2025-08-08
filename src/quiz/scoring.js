@@ -24,10 +24,11 @@ function getAllQuizScores(quizSessions) {
 }
 
 function calcQuizScore({ questions, total }) {
-	const correct = questions.reduce(
-		(acc, question) => (question.correct ? acc + 1 : acc),
-		0
-	)
+	const correct = questions.reduce((acc, question) => {
+		const attempts = question.attempts || []
+		const lastAttempt = attempts[attempts?.length - 1]
+		return lastAttempt?.isCorrect ? acc + 1 : acc
+	}, 0)
 	const score = total > 0 ? Number(((100 * correct) / total).toFixed(2)) : 0
 	const result = `${correct} out of ${total} (${score}%)`
 	const completed = true

@@ -1,5 +1,6 @@
 {
-	"topic": "planets",
+	"topic": "Planets",
+	"slug": "planets",
 	"desc": "Basic questions about the planets in our solar system.",
 	"questions": [
 		{

@@ -1,5 +1,6 @@
 {
-	"topic": "cats",
+	"topic": "Cats",
+	"slug": "cats",
 	"desc": "Simple questions about domestic cats.",
 	"questions": [
 		{

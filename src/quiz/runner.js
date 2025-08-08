@@ -1,28 +1,22 @@
 import { calcQuizScore } from "./scoring.js"
+import { updateQuestionSet } from "./generator.js"
 import { promptUser } from "../io/cli.js"
 import { POSITIVE_RESPONSES, PROMPTS } from "../utils/constants.js"
+import { randomUUID } from "node:crypto"
 
 export async function runQuestionSet(questionSet, quizSessions) {
 	const quizSessionId = generateNextSessionid(quizSessions)
 
 	const quizSession = createQuizSession(questionSet, quizSessionId)
 	quizSessions.push(quizSession)
-	const questions = quizSession.questions
-
-	for (let j = 0; j < questions.length; j++) {
-		const currentQuestion = questions[j]
-		const { userAnswer, correct } = await askQuestion(currentQuestion)
-		currentQuestion.userAnswer = userAnswer
-		currentQuestion.correct = correct
-	}
+	await loopThroughQuestions(quizSession.questions)
 
 	const scoreData = calcQuizScore(quizSession)
 	Object.assign(quizSession, scoreData)
 
 	console.log(`You scored: ${quizSession.result}!`)
 
-	// TODO: future update logic for permanent scoring, etc. on questions array
-
+	await updateQuestionSet(questionSet.slug, quizSession.questions)
 	return await askForReplay()
 }
 
@@ -36,7 +30,7 @@ function createQuizSession(questionSet, quizSessionId) {
 		id: quizSessionId,
 		topic: questionSet.topic,
 		desc: questionSet.desc,
-		questions: questionSet.questions.map((q) => ({ ...q, correct: null })),
+		questions: [...questionSet.questions],
 		completed: false,
 		correct: 0,
 		total: questionSet.questions.length,
@@ -55,17 +49,45 @@ function generateNextSessionid(quizSessions) {
 	return quizSessionId
 }
 
+async function loopThroughQuestions(questions) {
+	for (let j = 0; j < questions.length; j++) {
+		const currentQuestion = questions[j]
+		const { userAnswer, isCorrect } = await askQuestion(currentQuestion)
+		const questionAttempt = {
+			userAnswer,
+			isCorrect,
+			answeredAt: new Date(),
+			id: randomUUID(),
+			answersAtTime: [...currentQuestion.answers],
+		}
+		if (currentQuestion.attempts) {
+			currentQuestion.attempts = [
+				...currentQuestion.attempts,
+				questionAttempt,
+			]
+		} else {
+			currentQuestion.attempts = [questionAttempt]
+		}
+		currentQuestion.correctCount += isCorrect ? 1 : 0
+		currentQuestion.attemptCount += 1
+	}
+}
+
 async function askQuestion(question) {
 	const userAnswer = await promptUser(
 		PROMPTS.QUESTION_ANSWER(question.prompt)
 	)
-	const correct = checkAnswer(question, userAnswer)
-	return { userAnswer, correct }
+	const isCorrect = checkAnswer(question, userAnswer)
+	return { userAnswer, isCorrect }
 }
 
 function checkAnswer({ answers }, userAnswer) {
-	const isCorrect = answers.map((a) => a.toLowerCase()).includes(userAnswer)
-	const isYesNo = ["yes", "no"].some((str) => answers.includes(str))
+	const isCorrect = answers.some(
+		(a) => a.toLowerCase() === userAnswer.toLowerCase()
+	)
+
+	const isYesNo = answers.some((a) => a === "yes" || a === "no")
+
 	let text = `${isCorrect ? "Correct!\n" : "Wrong!\n"}`
 
 	if (isCorrect) {

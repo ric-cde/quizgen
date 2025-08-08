@@ -1,5 +1,6 @@
 {
-  "topic": "dogs",
+  "topic": "Dogs",
+  "slug": "dogs",
   "desc": "Advanced questions testing detailed knowledge about dogs, including breeds, biology, and behavior.",
   "questions": [
     {

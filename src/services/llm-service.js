@@ -36,7 +36,7 @@ export async function generateQuestionSet(
 
 		return JSON.parse(response.output_text)
 	} catch (err) {
-		console.error("Failed to generate quiz from AI: ", error)
+		console.error("Failed to generate quiz from AI: ", err)
 	}
 }
 

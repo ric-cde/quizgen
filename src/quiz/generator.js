@@ -1,4 +1,7 @@
-import { loadTopicFromFile, writeTopicToFile } from "../io/file-manager.js"
+import {
+	loadQuestionSetFromFile as loadQuestionSetFromFile,
+	writeQuestionSetToFile,
+} from "../io/file-manager.js"
 import { promptUser } from "../io/cli.js"
 import { generateQuestionSet } from "../services/llm-service.js"
 import {
@@ -7,11 +10,13 @@ import {
 	PROMPTS,
 	QUIZ_DEFAULTS,
 } from "../utils/constants.js"
+import { randomUUID } from "node:crypto"
+import { slugify } from "../utils/helpers.js"
 
 export async function requestTopicChoice(topics) {
 	const userTopic = await promptUser(PROMPTS.TOPIC_SELECTION)
 
-	if (userTopic === "custom" || topics.includes(userTopic)) {
+	if (userTopic === "custom" || findExistingTopic(topics, userTopic)) {
 		return userTopic
 	} else {
 		console.log(ERROR_MESSAGES.TOPIC_NOT_FOUND)
@@ -19,12 +24,22 @@ export async function requestTopicChoice(topics) {
 	}
 }
 
-export async function loadQuestionSet(topic) {
-	if (!topic || typeof topic !== "string") {
-		throw new Error("Topic must be a non-empty string")
+export async function loadQuestionSet(slug) {
+	if (!slug || typeof slug !== "string") {
+		throw new Error("Topic slug must be a non-empty string")
 	}
 	try {
-		const questionSet = await loadTopicFromFile(topic)
+		const questionSet = await loadQuestionSetFromFile(slug)
+
+		if (!questionSet.slug || questionSet.slug === "") {
+			if (questionSet.topic) {
+				questionSet.slug = slugify(questionSet.topic)
+			} else {
+				throw new Error(
+					"Question set missing both slug and topic title"
+				)
+			}
+		}
 
 		if (
 			!questionSet.questions ||
@@ -43,83 +58,163 @@ export async function loadQuestionSet(topic) {
 }
 
 export function selectRandomQuestions(questions, numberOfQuestions = 5) {
-	questions = questions
+	const shuffled = [...questions]
 		.sort(() => Math.random() - 0.5)
 		.slice(0, numberOfQuestions)
 
-	return questions
+	return shuffled
 }
 
-export async function generateCustomTopic(topics, customTopic) {
-	const topicAlreadyExists = topics.includes(customTopic.toLowerCase())
-	let lastQuestionSetId = -1
-	let questionSet = {}
-
-	// Does the topic already exist? Ask user if they want extra questions
-	if (topicAlreadyExists) {
-		questionSet = { ...(await loadQuestionSet(customTopic)) }
-		const existingQuestions = questionSet.questions || []
-
-		lastQuestionSetId =
-			existingQuestions.length > 0
-				? existingQuestions[existingQuestions.length - 1]
-						.questionSetId || 0
-				: 0
-	}
-
-	if (!customTopic) {
+export async function handleCustomTopic(topics, topicChoice) {
+	if (!topicChoice) {
 		console.log(ERROR_MESSAGES.INVALID_TOPIC_NAME)
 		return null
 	}
+
+	const existingTopic = findExistingTopic(topics, topicChoice)
+	const topicAlreadyExists = !!existingTopic
+
+	let questionSet = {}
+
+	// check if topic exists
+	if (topicAlreadyExists) {
+		const slug = existingTopic.slug || slugify(topicChoice)
+		questionSet = await loadQuestionSet(slug)
+		if (!questionSet) {
+			console.log("Error loading existing topic. Creating new one...")
+		}
+	}
+
 	const numberOfQuestions = await askQuestionCount(10)
 	const difficulty = await promptUser(PROMPTS.QUESTION_DIFFICULTY)
 
 	try {
 		console.log(
-			`Generating new question set about: ${customTopic} (questions: ${numberOfQuestions}, difficulty: ${difficulty})`
+			`Generating new question set about: ${topicChoice} (questions: ${numberOfQuestions}, difficulty: ${difficulty})`
 		)
 
-		const newQuestionSet = await generateQuestionSet(
-			customTopic,
-			numberOfQuestions,
-			difficulty
+		const { mergedQuestionSet, lastQuestionTrancheId } =
+			await generateAndMergeQuestions(
+				topicChoice,
+				numberOfQuestions,
+				difficulty,
+				questionSet
+			)
+
+		await saveQuestionSet(mergedQuestionSet)
+		console.log(SUCCESS_MESSAGES.TOPIC_ADDED(topicChoice))
+
+		const newQuestions = mergedQuestionSet.questions.filter(
+			(q) => q.questionTrancheId === lastQuestionTrancheId + 1
 		)
-
-		const newQuestions = newQuestionSet.questions.map((question) => {
-			question.questionSetId = lastQuestionSetId + 1
-			question.difficulty = newQuestionSet.difficulty
-			question.createdAt = new Date()
-			return question
-		})
-
-		newQuestionSet.questions = newQuestions
-
-		const existingQuestions = questionSet.questions || []
-
-		const mergedQuestionSet = {
-			topic: questionSet.topic || newQuestionSet.topic,
-			desc: questionSet.desc || newQuestionSet.desc,
-			questions: [...existingQuestions, ...newQuestions],
-		}
-
-		// save merged version of existing and new question sets
-		await saveTopic(customTopic, mergedQuestionSet)
-
-		if (!topicAlreadyExists) {
-			topics.push(customTopic)
-		}
-		console.log(SUCCESS_MESSAGES.TOPIC_ADDED(customTopic))
 
 		// return only the new question set for this round
-		return newQuestionSet
+		return {
+			...mergedQuestionSet,
+			questions: newQuestions,
+		}
 	} catch (err) {
 		console.log("Error:", err)
 		return null
 	}
 }
 
-async function saveTopic(customTopic, questionSet) {
-	await writeTopicToFile(customTopic, questionSet)
+async function generateAndMergeQuestions(
+	topicChoice,
+	numberOfQuestions,
+	difficulty,
+	questionSet = {}
+) {
+	// generate new questions from the llm-service
+	const newQuestionSet = await generateQuestionSet(
+		topicChoice,
+		numberOfQuestions,
+		difficulty
+	)
+
+	const existingQuestions = questionSet.questions || []
+
+	const lastQuestionTrancheId =
+		existingQuestions.length > 0
+			? Math.max(
+					...(existingQuestions.map((q) => q.questionTrancheId) || 0)
+			  )
+			: 0
+
+	const newQuestions = addQuestionsMetadata(
+		newQuestionSet,
+		lastQuestionTrancheId
+	)
+
+	const mergedQuestionSet = {
+		topic: questionSet.topic || newQuestionSet.topic,
+		slug: questionSet.slug || slugify(newQuestionSet.topic),
+		desc: questionSet.desc || newQuestionSet.desc,
+		id: questionSet.id || randomUUID(),
+		questions: [...existingQuestions, ...newQuestions],
+	}
+
+	return { mergedQuestionSet, lastQuestionTrancheId }
+}
+
+export function findExistingTopic(topics, topicChoice) {
+	return topics.find(
+		(t) =>
+			t.topic.toLowerCase() === topicChoice.toLowerCase() ||
+			t.slug === slugify(topicChoice)
+	)
+}
+
+async function saveQuestionSet(questionSet) {
+	const slug = questionSet.slug || slugify(questionSet.topic)
+	await writeQuestionSetToFile(slug, questionSet)
+}
+
+export async function updateQuestionSet(
+	slug,
+	updatedQuestions,
+	topicName = null
+) {
+	const questionSet = await loadQuestionSet(slug)
+
+	// update metadata of only the questions asked in current round
+	const questionSetMap = new Map()
+	for (const q of questionSet.questions) {
+		questionSetMap.set(q.id, q)
+	}
+
+	for (const q of updatedQuestions) {
+		questionSetMap.set(q.id, q)
+	}
+
+	if (topicName && topicName !== "") {
+		questionSet.topic = topicName
+	}
+
+	questionSet.questions = [...questionSetMap.values()]
+
+	try {
+		await saveQuestionSet(questionSet)
+		console.log("Answers saved to disk.")
+	} catch (err) {
+		console.error("Error saving question set:", err)
+	}
+}
+
+function addQuestionsMetadata(
+	{ questions, difficulty },
+	lastQuestionTrancheId
+) {
+	return questions.map((question) => {
+		question.questionTrancheId = lastQuestionTrancheId + 1
+		question.difficulty = difficulty
+		question.createdAt = new Date()
+		question.attempts = []
+		question.id = randomUUID()
+		question.attemptCount = 0
+		question.correctCount = 0
+		return question
+	})
 }
 
 export async function askQuestionCount(max, min = QUIZ_DEFAULTS.MIN_QUESTIONS) {

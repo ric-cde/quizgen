@@ -1,44 +1,154 @@
 {
-  "topic": "tigers",
-  "desc": "Advanced questions exploring the biology, behavior, and conservation of tigers.",
+  "topic": "Tigers",
+  "slug": "tigers",
+  "desc": "Intermediate-level questions about the biology, habitat, and behavior of tigers.",
+  "id": "9dcd9bb5-05da-4403-912f-4d9f10e828bd",
   "questions": [
     {
-      "prompt": "What is the primary habitat type for the Siberian tiger?",
+      "prompt": "What is the primary habitat of wild tigers?",
       "answers": [
-        "boreal forest",
-        "taiga",
-        "mixed coniferous forest"
+        "forests",
+        "tropical rainforests",
+        "grasslands",
+        "mangrove swamps"
       ],
-      "questionSetId": 0
+      "questionTrancheId": 1,
+      "difficulty": "5",
+      "createdAt": "2025-08-07T14:39:50.535Z",
+      "attempts": [
+        {
+          "userAnswer": "forest",
+          "isCorrect": false,
+          "answeredAt": "2025-08-07T14:44:03.622Z",
+          "id": "0b1d8303-a43b-4734-a180-cd6b9e9f48d0",
+          "answersAtTime": [
+            "forests",
+            "tropical rainforests",
+            "grasslands",
+            "mangrove swamps"
+          ]
+        },
+        {
+          "userAnswer": "forestry",
+          "isCorrect": false,
+          "answeredAt": "2025-08-07T16:09:37.803Z",
+          "id": "0ed9576e-2dd0-4112-8712-95553ed79cd9",
+          "answersAtTime": [
+            "forests",
+            "tropical rainforests",
+            "grasslands",
+            "mangrove swamps"
+          ]
+        },
+        {
+          "userAnswer": "forests",
+          "isCorrect": true,
+          "answeredAt": "2025-08-07T16:10:00.230Z",
+          "id": "3a89d9f8-3953-44d2-be66-11918be6bbad",
+          "answersAtTime": [
+            "forests",
+            "tropical rainforests",
+            "grasslands",
+            "mangrove swamps"
+          ]
+        },
+        {
+          "userAnswer": "forests",
+          "isCorrect": true,
+          "answeredAt": "2025-08-08T11:44:05.536Z",
+          "id": "aeca4987-c52e-43c3-a056-52ec73d726c5",
+          "answersAtTime": [
+            "forests",
+            "tropical rainforests",
+            "grasslands",
+            "mangrove swamps"
+          ]
+        }
+      ],
+      "id": "db2cc146-9524-43ad-99f8-f8070cc68fe0",
+      "attemptCount": 4,
+      "correctCount": 2
     },
     {
-      "prompt": "Which prey species constitutes a significant portion of the diet for Bengal tigers in the Sundarbans mangrove forest?",
+      "prompt": "What is the primary habitat of Bengal tigers?",
       "answers": [
-        "chital",
-        "spotted deer",
-        "wild boar"
+        "tropical rainforests",
+        "grasslands",
+        "mangrove swamps",
+        "dense forests"
       ],
-      "questionSetId": 0
+      "questionTrancheId": 2,
+      "difficulty": "5",
+      "createdAt": "2025-08-07T16:09:49.479Z",
+      "attempts": [
+        {
+          "userAnswer": "grasslands",
+          "isCorrect": true,
+          "answeredAt": "2025-08-07T16:10:22.271Z",
+          "id": "358ed790-613e-49c6-a947-835e699e9241",
+          "answersAtTime": [
+            "tropical rainforests",
+            "grasslands",
+            "mangrove swamps",
+            "dense forests"
+          ]
+        },
+        {
+          "userAnswer": "forests",
+          "isCorrect": false,
+          "answeredAt": "2025-08-08T11:44:08.799Z",
+          "id": "f9f72ac6-188e-475b-98d2-444598d48f11",
+          "answersAtTime": [
+            "tropical rainforests",
+            "grasslands",
+            "mangrove swamps",
+            "dense forests"
+          ]
+        }
+      ],
+      "id": "1197ad6b-1b3a-4229-b7dc-368d8287f08f",
+      "attemptCount": 2,
+      "correctCount": 1
     },
     {
-      "prompt": "True or False: Tigers are solitary animals that mark their territories using scent marking and vocalizations.",
+      "prompt": "In which of the following habitats are tigers typically found: [rainforest], [desert], or [grasslands]?",
       "answers": [
-        "true",
-        "yes",
-        "correct",
-        "yep"
+        "rainforest",
+        "grasslands"
       ],
-      "questionSetId": 0
+      "questionTrancheId": 3,
+      "difficulty": "5",
+      "createdAt": "2025-08-07T16:10:15.126Z",
+      "attempts": [
+        {
+          "userAnswer": "rainforest",
+          "isCorrect": true,
+          "answeredAt": "2025-08-08T11:55:39.076Z",
+          "id": "829623ac-b8ba-434d-8056-bb296fe2a1ea",
+          "answersAtTime": [
+            "rainforest",
+            "grasslands"
+          ]
+        }
+      ],
+      "id": "a47a958a-a89c-4bf8-9ec0-ad4c320ebc31",
+      "attemptCount": 1,
+      "correctCount": 1
     },
     {
-      "prompt": "Which of the following subspecies of tiger is considered the largest: [bengal], [siberian], or [sumatran]?",
+      "prompt": "What is the term for the unique pattern of stripes on a tiger?",
       "answers": [
-        "siberian",
-        "siberian tiger",
-        "amur tiger"
+        "stripe pattern",
+        "stripe markings",
+        "unique stripe pattern"
       ],
-      "questionSetId": 1,
-      "difficulty": 5
+      "questionTrancheId": 4,
+      "difficulty": "5",
+      "createdAt": "2025-08-08T11:55:33.954Z",
+      "attempts": [],
+      "id": "9cef812e-8666-49b3-b433-b08a7d1960f2",
+      "attemptCount": 0,
+      "correctCount": 0
     }
   ]
 }

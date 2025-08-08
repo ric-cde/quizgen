@@ -1,5 +1,6 @@
 {
-	"topic": "birds",
+	"topic": "Birds",
+	"slug": "birds",
 	"desc": "Basic questions about birds and their features.",
 	"questions": [
 		{

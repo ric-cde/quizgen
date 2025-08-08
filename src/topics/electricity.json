@@ -1,5 +1,6 @@
 {
-	"topic": "electricity",
+	"topic": "Electricity",
+	"slug": "electricity",
 	"desc": "Simple questions about basic electricity facts.",
 	"questions": [
 		{

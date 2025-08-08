@@ -1,10 +1,11 @@
-import { askForReplay, runQuestionSet } from "./runner.js"
+import { runQuestionSet } from "./runner.js"
 import {
 	requestTopicChoice,
 	loadQuestionSet,
-	generateCustomTopic,
+	handleCustomTopic,
 	selectRandomQuestions,
 	askQuestionCount,
+	findExistingTopic,
 } from "./generator.js"
 import { promptUser, closeReadLine } from "../io/cli.js"
 import { loadTopicNames } from "../io/file-manager.js"
@@ -28,15 +29,8 @@ export async function start(initialSessions = null) {
 	}
 
 	try {
-		const topics = await loadTopicNames()
-		if (topics.length > 0) {
-			console.log(SUCCESS_MESSAGES.TOPICS_LOADED)
-			console.log(SUCCESS_MESSAGES.WELCOME)
-			await prepareQuizRound(topics)
-		} else {
-			console.log(ERROR_MESSAGES.NO_TOPICS_AVAILABLE)
-			process.exit(0)
-		}
+		console.log(SUCCESS_MESSAGES.WELCOME)
+		await prepareQuizRound()
 	} catch (err) {
 		console.error(err)
 		console.log(ERROR_MESSAGES.LOAD_TOPICS_FAILED)
@@ -44,9 +38,19 @@ export async function start(initialSessions = null) {
 	}
 }
 
-export async function prepareQuizRound(topics) {
+export async function prepareQuizRound() {
+	const topics = await loadTopicNames()
+	if (topics.length > 0) {
+		console.log(SUCCESS_MESSAGES.TOPICS_LOADED)
+	} else {
+		console.log(ERROR_MESSAGES.NO_TOPICS_AVAILABLE)
+		process.exit(0)
+	}
+
 	console.log(
-		`The following topics are available:\n\n${topics.join("\n")}\ncustom\n`
+		`The following topics are available:\n\n${topics
+			.map((t) => t.topic)
+			.join("\n")}\ncustom\n`
 	)
 
 	let questionSet = await getTopicAndQuestionSet(topics)
@@ -56,7 +60,7 @@ export async function prepareQuizRound(topics) {
 		console.log(
 			"Error loading questions for this topic. Please try a different topic."
 		)
-		await prepareQuizRound(topics)
+		await prepareQuizRound()
 		return
 	}
 
@@ -80,7 +84,7 @@ export async function prepareQuizRound(topics) {
 						)
 						break
 					case "2":
-						await prepareQuizRound(topics)
+						await prepareQuizRound()
 						return
 					default:
 						// exit logic
@@ -109,7 +113,15 @@ async function getTopicAndQuestionSet(topics) {
 }
 
 async function fetchQuestionSet(topics, topicChoice) {
-	const topicAlreadyExists = topics.includes(topicChoice.toLowerCase())
+	const topicAlreadyExists = !!findExistingTopic(topics, topicChoice)
+	console.log(
+		`Inside fetchQuestionSet. topics = ${JSON.stringify(
+			topics,
+			null,
+			2
+		)}\n topicChoice = ${topicChoice}`
+	)
+
 	let questionSet
 	let generateNew = !topicAlreadyExists
 
@@ -120,11 +132,15 @@ async function fetchQuestionSet(topics, topicChoice) {
 			generateNew = true
 		}
 	}
-
+	console.log(`generateNew = ${generateNew}`)
 	if (generateNew) {
-		questionSet = await generateCustomTopic(topics, topicChoice)
+		questionSet = await handleCustomTopic(topics, topicChoice)
 	} else if (topicAlreadyExists) {
-		const fullQuestionSet = await loadQuestionSet(topicChoice)
+		const existingTopic = findExistingTopic(topics, topicChoice)
+
+		console.log(`existingTopic = ${JSON.stringify(existingTopic)}`)
+
+		const fullQuestionSet = await loadQuestionSet(existingTopic.slug)
 		const numberOfQuestions = await askQuestionCount(
 			fullQuestionSet.questions.length
 		)

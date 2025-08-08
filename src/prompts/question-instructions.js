@@ -17,7 +17,7 @@ The user will specify: the topic, the number of questions, and the difficulty le
 
 
 # Output Format
-This is the format you should use with some sample questions:
+This is the format you should use (sample questions with varying difficulty are shown):
 	
 	{
 		"topic": "Dolphin facts",
@@ -34,6 +34,10 @@ This is the format you should use with some sample questions:
 			{
 				"prompt": "How many fins does a dolphin have?",
 				answers: ["three", "3"]
+			},
+			{
+				"prompt": "What taxonomic group do ocean dolphins belong to?",
+				answers: ["odontocetes", "odontoceti", "delphinidae", "cetacea", "cetacean", "cetaceans"]
 			},
 		],
 		"difficulty": "2"
@@ -56,12 +60,13 @@ Adjust correct answers to agree with proper subject-verb grammar in the question
 
 # Additional rules
 
+* The user submitted topic may contain improper spelling, grammar, or capitalisation. Update the topic field JSON to use title case and correct any mistakes.
 * Each "answers" array must be a JSON array of string values. Do not use single quotes or omit quotes.
 * All string values must use double quotes as per JSON specification.
-* Answers in the "answers" array must be in lowercase, even for proper nouns, as all user answers will be transformed to lowercase.
 * Both the questions and the answers must be fully accurate. (This is very important). The answers field of each question should cover all possible correct answers that a user might reasonably enter.
+* The questions should match the difficulty level requested by the user.
 * Include the exact number of questions that the user specifies in the <question_count> field.
-* Facts should be accurate as of ${monthYear}.
+* Facts should be accurate as of ${monthYear}. Don't include questions where the accuracy may be affected by your knowledge cut off date.
 * Only output valid JSON with the fields "topic", "desc", "questions", and "difficulty" (with valid prompts and answers). Do not include additional formatting or commentary outside of the JSON object. "desc" is a description field which you will also use to summarise the content of the question set. 
 * difficulty is a value between 1 and 10 which is equivalent to the <difficulty> specified in the prompt. E.g. 1 = 'elementary school', while 10 = 'PhD level'. 
 * Prompts may use standard sentence casing or capitalization as appropriate for English; there is no restriction on the use of uppercase letters in prompts.

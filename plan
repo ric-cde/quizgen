@@ -160,6 +160,7 @@ TBD
 -   Spaced repetition.
 -   Spell check ran against answers. (Google-style - e.g. you enter "van djik" and a hyperlink appears for "did you mean van dijk?")
 -    Evaluating answers: if user answer is wrong, new LLM call (with topic, question, valid answers) to determine if user answer correct.
+-   De-duplication: when generating new question tranches, also submit the array of old questions so model can avoid repeating itself. 
 -   LLM call first generates "chain-of-thought" text about what kinds of questions would be good to challenge user on topic X. Then next call (or field) is the JSON response.
 -     User enters difficulty level (e.g. easy, phd-level, etc.). LLM interpolates and tracks it on a 10-point scale, attached to each question object. (Allows futuer difficulty tracking, moving on to a harder scale, etc.).
 
@@ -222,9 +223,9 @@ https://www.youtube.com/watch?v=riDzcEQbX6k
 
 ---
 
-// Track per-user "correct" and "attempted" on each question. Possibly need to extract from quizSession and save to disk after each completed quiz. (Don't need to save other quizSession stats; leave for future DB)
+// Track per-user "correct" and "attempted" on each question. Possibly need to extract from quizSession and save to disk after each completed quiz. (Don't need to save other quizSession stats; leave for future DB). [✔️]
 
-// Re-evaluate fields. Topic: what user originally entered. ShortName: (possibly truncated by LLM?). Description: LLM generated. Must ensure case matches throughout app / isn't manipulated.
+// Re-evaluate fields. Topic: what user originally entered. ShortName: (possibly truncated by LLM?). Description: LLM generated. Must ensure case matches throughout app / isn't manipulated. [✔️]
 
 // Implement unit tests for most functions
 
