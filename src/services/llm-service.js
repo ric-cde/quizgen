@@ -37,6 +37,7 @@ export async function generateQuestionSet(
 		return JSON.parse(response.output_text)
 	} catch (err) {
 		console.error("Failed to generate quiz from AI: ", err)
+		throw err
 	}
 }
 
@@ -49,7 +50,7 @@ function logUsage(usage) {
 	console.log(`Total price: \$${total_price}`)
 }
 
-function buildPrompt(topic, count, difficulty) {
+export function buildPrompt(topic, count, difficulty) {
 	return `Generate a quiz based on the subject of ${topic}. The questions should be logical and robust, with a difficulty level of ${difficulty}. Output format must be in JSON.
 	
 	<topic>${topic}</topic>

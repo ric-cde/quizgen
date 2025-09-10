@@ -149,6 +149,31 @@
       "id": "9cef812e-8666-49b3-b433-b08a7d1960f2",
       "attemptCount": 0,
       "correctCount": 0
+    },
+    {
+      "prompt": "Are tigers [mammals] or [reptiles]?",
+      "answers": [
+        "mammals",
+        "mammal"
+      ],
+      "questionTrancheId": 5,
+      "difficulty": "2",
+      "createdAt": "2025-08-12T11:38:37.421Z",
+      "attempts": [
+        {
+          "userAnswer": "mammals",
+          "isCorrect": true,
+          "answeredAt": "2025-08-12T11:38:41.991Z",
+          "id": "38791443-04eb-4e68-872a-130dad10a67f",
+          "answersAtTime": [
+            "mammals",
+            "mammal"
+          ]
+        }
+      ],
+      "id": "386ce466-9b68-4f0e-b0a2-818c6f5067d4",
+      "attemptCount": 1,
+      "correctCount": 1
     }
   ]
 }

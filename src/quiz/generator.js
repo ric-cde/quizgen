@@ -85,7 +85,9 @@ export async function handleCustomTopic(topics, topicChoice) {
 		}
 	}
 
-	const numberOfQuestions = await askQuestionCount(10)
+	const numberOfQuestions = await askQuestionCount(
+		QUIZ_DEFAULTS.MAX_QUESTIONS
+	)
 	const difficulty = await promptUser(PROMPTS.QUESTION_DIFFICULTY)
 
 	try {

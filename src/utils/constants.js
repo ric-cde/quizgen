@@ -7,6 +7,7 @@ export const TOPICS_DIR = "./src/topics"
 // Quiz config
 export const QUIZ_DEFAULTS = {
 	MIN_QUESTIONS: 1,
+	MAX_QUESTIONS: 10,
 	COUNTDOWN_DELAY: 500,
 }
 

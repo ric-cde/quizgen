@@ -5,7 +5,7 @@
 	"main": "src/index.js",
 	"scripts": {
 		"start": "node src/index.js",
-		"test": "echo \"Error: no test specified\" && exit 1",
+		"test": "vitest",
 		"gcp": "git add . && git commit && git push"
 	},
 	"author": "Richard Herlihy",
@@ -14,5 +14,8 @@
 	"dependencies": {
 		"dotenv": "^17.2.0",
 		"openai": "^5.10.1"
+	},
+	"devDependencies": {
+		"vitest": "^3.2.4"
 	}
 }

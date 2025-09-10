@@ -95,7 +95,6 @@ export function slugify(topicName, maxWord = 10, maxLength = 40) {
 	return sanitiseSlug(slug)
 }
 
-
 export function countdown(runFunction, delay, text, countdownPhrases) {
 	console.log(text)
 	let i = 0

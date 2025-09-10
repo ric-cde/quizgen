@@ -30,7 +30,7 @@ export async function start(initialSessions = null) {
 
 	try {
 		console.log(SUCCESS_MESSAGES.WELCOME)
-		await prepareQuizRound()
+		await engine.prepareQuizRound()
 	} catch (err) {
 		console.error(err)
 		console.log(ERROR_MESSAGES.LOAD_TOPICS_FAILED)
@@ -60,7 +60,7 @@ export async function prepareQuizRound() {
 		console.log(
 			"Error loading questions for this topic. Please try a different topic."
 		)
-		await prepareQuizRound()
+		await engine.prepareQuizRound()
 		return
 	}
 
@@ -78,18 +78,18 @@ export async function prepareQuizRound() {
 				switch (replayChoice) {
 					case "1":
 						console.log("Perfect, restarting the quiz...")
-						questionSet = await fetchQuestionSet(
+						questionSet = await engine.fetchQuestionSet(
 							topics,
 							questionSet.topic
 						)
 						break
 					case "2":
-						await prepareQuizRound()
+						await engine.prepareQuizRound()
 						return
 					default:
 						// exit logic
 						closeReadLine()
-						exitQuizgen()
+						engine.exitQuizgen()
 						return
 				}
 			}
@@ -101,6 +101,7 @@ export async function prepareQuizRound() {
 }
 
 async function getTopicAndQuestionSet(topics) {
+	// asks user for topic choice, then fetches questionSet
 	let topicChoice = await requestTopicChoice(topics)
 
 	if (topicChoice === "custom") {
@@ -108,7 +109,7 @@ async function getTopicAndQuestionSet(topics) {
 		topicChoice = await promptUser(PROMPTS.CUSTOM_TOPIC)
 	}
 
-	const questionSet = await fetchQuestionSet(topics, topicChoice)
+	const questionSet = await engine.fetchQuestionSet(topics, topicChoice)
 	return questionSet
 }
 
@@ -121,7 +122,7 @@ async function fetchQuestionSet(topics, topicChoice) {
 			2
 		)}\n topicChoice = ${topicChoice}`
 	)
-
+	
 	let questionSet
 	let generateNew = !topicAlreadyExists
 
@@ -171,3 +172,12 @@ export function exitQuizgen() {
 	}
 	console.log("See you next time. Exiting...")
 }
+
+const engine = {
+	start,
+	prepareQuizRound,
+	exitQuizgen,
+	fetchQuestionSet,
+}
+
+export default engine
