@@ -5,7 +5,7 @@ import { POSITIVE_RESPONSES, PROMPTS } from "../utils/constants.js"
 import { randomUUID } from "node:crypto"
 
 export async function runQuestionSet(questionSet, quizSessions) {
-	const quizSessionId = generateNextSessionid(quizSessions)
+	const quizSessionId = generateNextSessionId(quizSessions)
 
 	const quizSession = createQuizSession(questionSet, quizSessionId)
 	quizSessions.push(quizSession)
@@ -25,7 +25,7 @@ export async function askForReplay(count) {
 	return response
 }
 
-function createQuizSession(questionSet, quizSessionId) {
+export function createQuizSession(questionSet, quizSessionId) {
 	const quizSession = {
 		id: quizSessionId,
 		topic: questionSet.topic,
@@ -41,7 +41,7 @@ function createQuizSession(questionSet, quizSessionId) {
 	return quizSession
 }
 
-function generateNextSessionid(quizSessions) {
+export function generateNextSessionId(quizSessions) {
 	const quizSessionId =
 		quizSessions.length > 0
 			? quizSessions[quizSessions.length - 1].id + 1
@@ -49,7 +49,7 @@ function generateNextSessionid(quizSessions) {
 	return quizSessionId
 }
 
-async function loopThroughQuestions(questions) {
+export async function loopThroughQuestions(questions) {
 	for (let j = 0; j < questions.length; j++) {
 		const currentQuestion = questions[j]
 		const { userAnswer, isCorrect } = await askQuestion(currentQuestion)
@@ -68,12 +68,13 @@ async function loopThroughQuestions(questions) {
 		} else {
 			currentQuestion.attempts = [questionAttempt]
 		}
-		currentQuestion.correctCount += isCorrect ? 1 : 0
-		currentQuestion.attemptCount += 1
+		currentQuestion.correctCount =
+			(currentQuestion.correctCount ?? 0) + (isCorrect ? 1 : 0)
+		currentQuestion.attemptCount = (currentQuestion.attemptCount ?? 0) + 1
 	}
 }
 
-async function askQuestion(question) {
+export async function askQuestion(question) {
 	const userAnswer = await promptUser(
 		PROMPTS.QUESTION_ANSWER(question.prompt)
 	)
@@ -81,7 +82,7 @@ async function askQuestion(question) {
 	return { userAnswer, isCorrect }
 }
 
-function checkAnswer({ answers }, userAnswer) {
+export function checkAnswer({ answers }, userAnswer) {
 	const isCorrect = answers.some(
 		(a) => a.toLowerCase() === userAnswer.toLowerCase()
 	)

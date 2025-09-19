@@ -1,0 +1,187 @@
+{
+  "topic": "Dogaroos",
+  "slug": "dogaroos",
+  "desc": "Intermediate-level questions about the concept and characteristics of dogaroos.",
+  "id": "ebe4fdaf-bcc5-449e-9f81-038eba41160b",
+  "questions": [
+    {
+      "prompt": "What two animals are combined to form a dogaroo?",
+      "answers": [
+        "dog and kangaroo",
+        "kangaroo and dog"
+      ],
+      "questionTrancheId": 1,
+      "difficulty": 5,
+      "createdAt": "2025-09-19T08:34:01.517Z",
+      "attempts": [
+        {
+          "userAnswer": "dog and kangaroo",
+          "isCorrect": true,
+          "answeredAt": "2025-09-19T08:34:10.623Z",
+          "id": "a6bb72d7-5361-43c3-94ab-9478900c87f1",
+          "answersAtTime": [
+            "dog and kangaroo",
+            "kangaroo and dog"
+          ]
+        },
+        {
+          "userAnswer": "dog and kangaroo",
+          "isCorrect": true,
+          "answeredAt": "2025-09-19T08:49:29.583Z",
+          "id": "e6094a91-493d-4354-bc09-c21457caa286",
+          "answersAtTime": [
+            "dog and kangaroo",
+            "kangaroo and dog"
+          ]
+        }
+      ],
+      "id": "a0d1a86a-d1a5-4561-bd73-f83d8e8bf71f",
+      "attemptCount": 2,
+      "correctCount": 2
+    },
+    {
+      "prompt": "Are dogaroos a real biological species or a fictional hybrid?",
+      "answers": [
+        "fictional hybrid",
+        "fictional",
+        "mythical",
+        "not real"
+      ],
+      "questionTrancheId": 1,
+      "difficulty": 5,
+      "createdAt": "2025-09-19T08:34:01.518Z",
+      "attempts": [
+        {
+          "userAnswer": "fictional",
+          "isCorrect": true,
+          "answeredAt": "2025-09-19T08:34:17.594Z",
+          "id": "52592174-f339-413c-aac0-248407a2da46",
+          "answersAtTime": [
+            "fictional hybrid",
+            "fictional",
+            "mythical",
+            "not real"
+          ]
+        },
+        {
+          "userAnswer": "yes",
+          "isCorrect": false,
+          "answeredAt": "2025-09-19T11:47:34.496Z",
+          "id": "d095311e-19bd-4f15-91e1-2432f42e3612",
+          "answersAtTime": [
+            "fictional hybrid",
+            "fictional",
+            "mythical",
+            "not real"
+          ]
+        },
+        {
+          "userAnswer": "yes",
+          "isCorrect": false,
+          "answeredAt": "2025-09-19T11:55:29.093Z",
+          "id": "87c20e9c-3b2e-4642-a121-efa14994a5b8",
+          "answersAtTime": [
+            "fictional hybrid",
+            "fictional",
+            "mythical",
+            "not real"
+          ]
+        }
+      ],
+      "id": "4ba82091-8636-42cd-8947-8c1040622ece",
+      "attemptCount": 3,
+      "correctCount": 1
+    },
+    {
+      "prompt": "Do dogaroos typically inherit the hopping ability of kangaroos?",
+      "answers": [
+        "yes",
+        "yep",
+        "correct",
+        "yeah"
+      ],
+      "questionTrancheId": 1,
+      "difficulty": 5,
+      "createdAt": "2025-09-19T08:34:01.518Z",
+      "attempts": [
+        {
+          "userAnswer": "yes",
+          "isCorrect": true,
+          "answeredAt": "2025-09-19T08:34:24.487Z",
+          "id": "884d98c6-418e-4b5b-8a9a-3e93beb767f1",
+          "answersAtTime": [
+            "yes",
+            "yep",
+            "correct",
+            "yeah"
+          ]
+        },
+        {
+          "userAnswer": "yes",
+          "isCorrect": true,
+          "answeredAt": "2025-09-19T11:47:33.041Z",
+          "id": "762ba237-160f-413e-87fa-c6bdf681c9d7",
+          "answersAtTime": [
+            "yes",
+            "yep",
+            "correct",
+            "yeah"
+          ]
+        },
+        {
+          "userAnswer": "k",
+          "isCorrect": false,
+          "answeredAt": "2025-09-19T11:55:18.942Z",
+          "id": "5bf15f06-e36c-4138-bfae-f7ff2f9bc85b",
+          "answersAtTime": [
+            "yes",
+            "yep",
+            "correct",
+            "yeah"
+          ]
+        }
+      ],
+      "id": "8251b929-0474-4958-b2f7-9ccc1810ebd8",
+      "attemptCount": 3,
+      "correctCount": 2
+    },
+    {
+      "prompt": "What unique physiological adaptation allows Dogaroos to both hop efficiently like kangaroos and utilize a dog's biting mechanism simultaneously?",
+      "answers": [
+        "specialized musculoskeletal hybrid system",
+        "adapted limb musculature",
+        "modified jaw and leg coordination"
+      ],
+      "questionTrancheId": 2,
+      "difficulty": 8,
+      "createdAt": "2025-09-19T11:48:38.902Z",
+      "attempts": [
+        {
+          "userAnswer": "yes",
+          "isCorrect": false,
+          "answeredAt": "2025-09-19T11:49:13.004Z",
+          "id": "c5269fa8-d92e-448a-aa51-b026ab70cbb2",
+          "answersAtTime": [
+            "specialized musculoskeletal hybrid system",
+            "adapted limb musculature",
+            "modified jaw and leg coordination"
+          ]
+        },
+        {
+          "userAnswer": "s",
+          "isCorrect": false,
+          "answeredAt": "2025-09-19T11:55:17.747Z",
+          "id": "40999ce0-19f1-449a-bf76-4cb3c27d89cd",
+          "answersAtTime": [
+            "specialized musculoskeletal hybrid system",
+            "adapted limb musculature",
+            "modified jaw and leg coordination"
+          ]
+        }
+      ],
+      "id": "20660014-eb5b-4aa9-b414-94492cea049a",
+      "attemptCount": 2,
+      "correctCount": 0
+    }
+  ]
+}

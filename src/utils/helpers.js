@@ -96,14 +96,16 @@ export function slugify(topicName, maxWord = 10, maxLength = 40) {
 }
 
 export function countdown(runFunction, delay, text, countdownPhrases) {
-	console.log(text)
-	let i = 0
-	const timer = setInterval(() => {
-		console.log(countdownPhrases[i])
-		i++
-		if (i >= countdownPhrases.length) {
-			clearInterval(timer)
-			runFunction()
-		}
-	}, delay)
+	return new Promise((resolve) => {
+		console.log(text)
+		let i = 0
+		const timer = setInterval(() => {
+			console.log(countdownPhrases[i])
+			i++
+			if (i >= countdownPhrases.length) {
+				clearInterval(timer)
+				Promise.resolve(runFunction()).then(resolve)
+			}
+		}, delay)
+	})
 }

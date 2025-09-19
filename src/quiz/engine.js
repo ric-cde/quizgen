@@ -66,7 +66,7 @@ export async function prepareQuizRound() {
 
 	console.log(`\nGreat! Get ready to dive deep on ${questionSet.topic}.`)
 
-	countdown(
+	await countdown(
 		async () => {
 			while (true) {
 				// 1 = same topic, 2 = another topic
@@ -89,7 +89,7 @@ export async function prepareQuizRound() {
 					default:
 						// exit logic
 						closeReadLine()
-						engine.exitQuizgen()
+						engine.exitQuizgen(quizSessions)
 						return
 				}
 			}
@@ -115,14 +115,14 @@ async function getTopicAndQuestionSet(topics) {
 
 async function fetchQuestionSet(topics, topicChoice) {
 	const topicAlreadyExists = !!findExistingTopic(topics, topicChoice)
-	console.log(
-		`Inside fetchQuestionSet. topics = ${JSON.stringify(
-			topics,
-			null,
-			2
-		)}\n topicChoice = ${topicChoice}`
-	)
-	
+	// console.log(
+	// 	`Inside fetchQuestionSet. topics = ${JSON.stringify(
+	// 		topics,
+	// 		null,
+	// 		2
+	// 	)}\n topicChoice = ${topicChoice}`
+	// )
+
 	let questionSet
 	let generateNew = !topicAlreadyExists
 
@@ -133,13 +133,13 @@ async function fetchQuestionSet(topics, topicChoice) {
 			generateNew = true
 		}
 	}
-	console.log(`generateNew = ${generateNew}`)
+	// console.log(`generateNew = ${generateNew}`)
 	if (generateNew) {
 		questionSet = await handleCustomTopic(topics, topicChoice)
 	} else if (topicAlreadyExists) {
 		const existingTopic = findExistingTopic(topics, topicChoice)
 
-		console.log(`existingTopic = ${JSON.stringify(existingTopic)}`)
+		// console.log(`existingTopic = ${JSON.stringify(existingTopic)}`)
 
 		const fullQuestionSet = await loadQuestionSet(existingTopic.slug)
 		const numberOfQuestions = await askQuestionCount(
@@ -157,7 +157,7 @@ async function fetchQuestionSet(topics, topicChoice) {
 	return questionSet
 }
 
-export function exitQuizgen() {
+export function exitQuizgen(quizSessions) {
 	const count = quizSessions.length
 	if (count > 0) {
 		console.log(
@@ -166,7 +166,7 @@ export function exitQuizgen() {
 			}. Your result(s):\n`
 		)
 
-		console.log(getAllQuizScores(quizSessions).join("\n"), "\n")
+		console.log(getAllQuizScores(quizSessions).join("\n") + "\n")
 
 		console.log(getOverallCorrect(quizSessions))
 	}

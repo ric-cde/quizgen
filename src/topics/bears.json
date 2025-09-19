@@ -1,0 +1,83 @@
+{
+  "topic": "Bears",
+  "slug": "bears",
+  "desc": "Intermediate-level questions about various bear species, their characteristics, and behaviors.",
+  "id": "0150e223-e5a2-4c99-aab4-f68f55d9f4b4",
+  "questions": [
+    {
+      "prompt": "Which bear species is primarily known for its distinctive white fur?",
+      "answers": [
+        "polar bear",
+        "polar"
+      ],
+      "questionTrancheId": 1,
+      "difficulty": "5",
+      "createdAt": "2025-09-15T15:13:10.120Z",
+      "attempts": [
+        {
+          "userAnswer": "polar",
+          "isCorrect": true,
+          "answeredAt": "2025-09-15T15:13:15.075Z",
+          "id": "94b5ce5b-e30e-40b6-af01-ebd089b3cac4",
+          "answersAtTime": [
+            "polar bear",
+            "polar"
+          ]
+        }
+      ],
+      "id": "c57303d2-d0e5-4007-9915-81c6c4738f63",
+      "attemptCount": 1,
+      "correctCount": 1
+    },
+    {
+      "prompt": "What is the main diet of a giant panda?",
+      "answers": [
+        "bamboo",
+        "bamboo shoots"
+      ],
+      "questionTrancheId": 1,
+      "difficulty": "5",
+      "createdAt": "2025-09-15T15:13:10.121Z",
+      "attempts": [
+        {
+          "userAnswer": "leaves",
+          "isCorrect": false,
+          "answeredAt": "2025-09-15T15:13:18.569Z",
+          "id": "5821fcc8-4b59-4d44-8c3a-6ccafc7a3c60",
+          "answersAtTime": [
+            "bamboo",
+            "bamboo shoots"
+          ]
+        }
+      ],
+      "id": "fef57d51-df95-481c-a1b4-d828eadd0f7a",
+      "attemptCount": 1,
+      "correctCount": 0
+    },
+    {
+      "prompt": "Are bears carnivores, herbivores, or omnivores?",
+      "answers": [
+        "omnivores",
+        "omnivore"
+      ],
+      "questionTrancheId": 1,
+      "difficulty": "5",
+      "createdAt": "2025-09-15T15:13:10.122Z",
+      "attempts": [
+        {
+          "userAnswer": "carnivores",
+          "isCorrect": false,
+          "answeredAt": "2025-09-15T15:13:27.125Z",
+          "id": "2f102311-396a-4456-a5e2-97ca898fdbd3",
+          "answersAtTime": [
+            "omnivores",
+            "omnivore"
+          ]
+        }
+      ],
+      "id": "1f91dda7-8467-4e15-af7e-a2779547f47d",
+      "attemptCount": 1,
+      "correctCount": 0
+    }
+  ]
+}

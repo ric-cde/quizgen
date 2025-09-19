@@ -1,24 +1,12 @@
-vi.mock("../io/file-manager.js", () => ({
-	loadTopicNames: vi.fn(),
-}))
 
-vi.mock("./runner.js", () => ({
-	runQuestionSet: vi.fn(),
-}))
 
 vi.mock("./generator.js", () => ({
-	requestTopicChoice: vi.fn(),
-	loadQuestionSet: vi.fn(),
 	handleCustomTopic: vi.fn(),
-	selectRandomQuestions: vi.fn(),
-	askQuestionCount: vi.fn(),
 	findExistingTopic: vi.fn(),
 }))
 
-vi.mock("../cli.js", () => ({
-	promptUser: vi.fn(),
-	closeReadLine: vi.fn(),
-}))
+import { SUCCESS_MESSAGES } from "../utils/constants.js"
+import { ERROR_MESSAGES } from "../utils/constants.js"
 
 import engine from "./engine.js"
 import { handleCustomTopic, findExistingTopic } from "./generator.js"
@@ -29,19 +17,43 @@ afterEach(() => {
 
 describe("engine.js", () => {
 	describe("start()", () => {
+		let consoleSpy, prepareQuizRoundSpy
+
+		beforeEach(() => {
+			consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {})
+			vi.spyOn(console, "error").mockImplementation(() => {})
+			prepareQuizRoundSpy = vi.spyOn(engine, "prepareQuizRound")
+		})
+
 		it("initialise with empty sessions array and calls prepareQuizRound", async () => {
-			const prepareQuizRoundSpy = vi
-				.spyOn(engine, "prepareQuizRound")
-				.mockResolvedValue()
+			prepareQuizRoundSpy.mockReturnValue(true)
 
-			await engine.start()
-
+			await engine.start([])
+			expect(consoleSpy).toHaveBeenCalledWith(SUCCESS_MESSAGES.WELCOME)
 			expect(prepareQuizRoundSpy).toHaveBeenCalledTimes(1)
+		})
+
+		it("throws an error when topics don't load", async () => {
+			const exitSpy = vi
+				.spyOn(process, "exit")
+				.mockImplementation(() => {})
+
+			prepareQuizRoundSpy.mockImplementation(() => {
+				throw new Error("Test error")
+			})
+
+			await engine.start([])
+
+			expect(consoleSpy).toHaveBeenCalledWith(
+				ERROR_MESSAGES.LOAD_TOPICS_FAILED
+			)
+			expect(prepareQuizRoundSpy).toHaveBeenCalledTimes(1)
+			expect(exitSpy).toHaveBeenCalledWith(0)
 		})
 	})
 
 	describe("fetchQuestionSet()", () => {
-		it.only("new topic that doesn't exist results in handleCustomTopic() being called & questionSet returned", async () => {
+		it("new topic that doesn't exist results in handleCustomTopic() being called & questionSet returned", async () => {
 			const topicChoice = "BEARS"
 			const topics = [
 				{
@@ -56,7 +68,7 @@ describe("engine.js", () => {
 			const questionSet = {
 				topic: "bears",
 				slug: "bears",
-				desc: "Basic English-language questions about bears facts.",
+				desc: "Basic English-language questions about bear facts.",
 				questions: [
 					{
 						prompt: "Are bears [mammals] or [fish]?",
@@ -81,6 +93,53 @@ describe("engine.js", () => {
 	})
 
 	describe("exitQuizgen()", () => {
-		it("", () => {})
+		let consoleSpy
+
+		beforeEach(() => {
+			consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {})
+		})
+
+		it("exit results for two quizzes displayed correctly", () => {
+			const quizSessions = [
+				{
+					id: 0,
+					topic: "Bears",
+					desc: "Intermediate-level questions about various bear species, their characteristics, and behaviors.",
+					completed: true,
+					correct: 1,
+					total: 3,
+					score: 33.33,
+					result: "1 out of 3 (33.33%)",
+					startTime: new Date("2025-09-15T15:13:11.666Z"),
+				},
+				{
+					id: 1,
+					topic: "Cats",
+					desc: "Intermediate-level questions about cats.",
+					completed: true,
+					correct: 2,
+					total: 3,
+					score: 66.66,
+					result: "2 out of 3 (66.66%)",
+					startTime: new Date("2025-09-15T15:15:11.666Z"),
+				},
+			]
+
+			engine.exitQuizgen(quizSessions)
+
+			expect(consoleSpy.mock.calls[0].join(" ")).toContain(
+				"You did 2 quizzes"
+			)
+			const secondLog = consoleSpy.mock.calls[1].join(" ")
+			expect(secondLog).toContain("Bears: 1 out of 3 (33.33%).")
+			expect(secondLog).toContain("Cats: 2 out of 3 (66.66%).")
+
+			expect(consoleSpy.mock.calls[2].join(" ")).toContain(
+				"Overall, you answered 3 out of 6 correctly (50%)"
+			)
+			expect(consoleSpy.mock.calls[3].join(" ")).toContain(
+				"See you next time. Exiting..."
+			)
+		})
 	})
 })

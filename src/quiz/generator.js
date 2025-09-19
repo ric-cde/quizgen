@@ -1,5 +1,5 @@
 import {
-	loadQuestionSetFromFile as loadQuestionSetFromFile,
+	loadQuestionSetFromFile,
 	writeQuestionSetToFile,
 } from "../io/file-manager.js"
 import { promptUser } from "../io/cli.js"
@@ -28,33 +28,32 @@ export async function loadQuestionSet(slug) {
 	if (!slug || typeof slug !== "string") {
 		throw new Error("Topic slug must be a non-empty string")
 	}
+	let questionSet
 	try {
-		const questionSet = await loadQuestionSetFromFile(slug)
-
-		if (!questionSet.slug || questionSet.slug === "") {
-			if (questionSet.topic) {
-				questionSet.slug = slugify(questionSet.topic)
-			} else {
-				throw new Error(
-					"Question set missing both slug and topic title"
-				)
-			}
-		}
-
-		if (
-			!questionSet.questions ||
-			!Array.isArray(questionSet.questions) ||
-			questionSet.questions.length < 1
-		) {
-			console.log(ERROR_MESSAGES.NO_QUESTIONS)
-			return null
-		}
-
-		return questionSet
+		questionSet = await loadQuestionSetFromFile(slug)
 	} catch (err) {
 		console.error("Error:", err)
 		return null
 	}
+
+	if (!questionSet.slug || questionSet.slug === "") {
+		if (questionSet.topic) {
+			questionSet.slug = slugify(questionSet.topic)
+		} else {
+			throw new Error("Question set missing both slug and topic title")
+		}
+	}
+
+	if (
+		!questionSet.questions ||
+		!Array.isArray(questionSet.questions) ||
+		questionSet.questions.length < 1
+	) {
+		console.log(ERROR_MESSAGES.NO_QUESTIONS)
+		return null
+	}
+
+	return questionSet
 }
 
 export function selectRandomQuestions(questions, numberOfQuestions = 5) {
@@ -128,6 +127,7 @@ async function generateAndMergeQuestions(
 	questionSet = {}
 ) {
 	// generate new questions from the llm-service
+	console.log(topicChoice, numberOfQuestions, difficulty)
 	const newQuestionSet = await generateQuestionSet(
 		topicChoice,
 		numberOfQuestions,
@@ -203,7 +203,7 @@ export async function updateQuestionSet(
 	}
 }
 
-function addQuestionsMetadata(
+export function addQuestionsMetadata(
 	{ questions, difficulty },
 	lastQuestionTrancheId
 ) {

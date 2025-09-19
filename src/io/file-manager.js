@@ -34,7 +34,6 @@ export async function loadTopicNames() {
 	return listOfFiles.filter((f) => f)
 }
 
-
 export async function loadQuestionSetFromFile(slug) {
 	try {
 		const data = await fs.readFile(
