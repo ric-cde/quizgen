@@ -1,21 +1,14 @@
 {
 	"name": "quizgen",
-	"version": "0.1.0",
-	"description": "LLM-based quiz generator for any topic",
-	"main": "src/index.js",
+	"private": true,
+	"workspaces": [
+		"cli",
+		"ui"
+	],
 	"scripts": {
-		"start": "node src/index.js",
-		"test": "vitest",
+		"cli": "npm start --workspace=cli",
+		"ui": "npm start --workspace=ui",
 		"gcp": "git add . && git commit && git push"
 	},
-	"author": "Richard Herlihy",
-	"license": "ISC",
-	"type": "module",
-	"dependencies": {
-		"dotenv": "^17.2.0",
-		"openai": "^5.10.1"
-	},
-	"devDependencies": {
-		"vitest": "^3.2.4"
-	}
+	"devDependencies": {}
 }
