@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import { useSearchParams } from "react-router"
+import { useSearchParams, useNavigate } from "react-router"
 import { useState, useEffect, useContext, createContext } from "react"
 import { QUIZ_DEFAULTS } from "@/lib/constants.js"
 import { Button } from "@/components/ui/button"
@@ -9,6 +9,8 @@ import { Switch } from "@/components/ui/switch"
 import { Slider } from "@/components/ui/slider"
 import { Sparkles, GraduationCap } from "lucide-react"
 import { ToggleGroup, ToggleGroupItem } from "./components/ui/toggle-group"
+import { createSession } from "@/services/quizEngine.js"
+import { loadQuestionBank } from "@/services/storage.js"
 
 const QuizFormContext = createContext({
 	quizFormState: {},
@@ -19,6 +21,7 @@ const QuizFormContext = createContext({
 
 const QuizComposerPage = ({ quizId, mode }) => {
 	const [params] = useSearchParams()
+	const navigate = useNavigate()
 
 	const getInitialState = () => {
 		const initialState = {
@@ -30,32 +33,62 @@ const QuizComposerPage = ({ quizId, mode }) => {
 		if (mode === "new") {
 			return {
 				...initialState,
+				quizId: null,
 				title: params.get("title") || "",
 				difficulty: QUIZ_DEFAULTS.DIFFICULTY,
 				grade: QUIZ_DEFAULTS.GRADE,
+				questions: [],
 			}
 		} else if (mode === "existing") {
-			// fetch(existing...)
-			const existingQuestions = 5
 			return {
 				...initialState,
-				quizRunQuestionCount: existingQuestions,
+				quizRunQuestionCount: 5,
+				quizId: quizId,
 			}
 		}
 	}
 
 	const [quizFormState, setQuizFormState] = useState(getInitialState)
+	const [isLoading, setIsLoading] = useState(false)
+	const [error, setError] = useState(null)
 
 	useEffect(() => {
-		if (mode === "existing" && quizId)
-			fetch(`/api/quiz/${quizId}`)
-				.then((r) => r.json())
-				.then((qSet) => setQuizFormState(qSet))
-				.catch((err) => console.error("Failed to load quiz:", err))
+		if (mode === "existing" && quizId) {
+			const load = async () => {
+				setIsLoading(true)
+				setError(null)
+				try {
+					const {
+						title,
+						description,
+						difficulty,
+						grade,
+						quizType,
+						questions,
+					} = await loadQuestionBank(quizId)
+					setQuizFormState((prev) => ({
+						...prev,
+						title,
+						description,
+						difficulty,
+						grade,
+						quizType,
+						maxQuestions: questions.length,
+						questions,
+					}))
+				} catch (error) {
+					console.error("Failed to load quiz:", error)
+					setError("Failed to load quiz data.")
+				} finally {
+					setIsLoading(false)
+				}
+			}
+			load()
+		}
 	}, [mode, quizId])
 
 	const handleChange = (e) => {
-		// if event change from an input update
+		// Check if event change from an input
 		if (e.target) {
 			const { name, value, type, checked } = e.target
 			const val = type === "checkbox" ? checked : value
@@ -66,21 +99,58 @@ const QuizComposerPage = ({ quizId, mode }) => {
 		}
 	}
 
-	const navigate = useNavigate()
-
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault()
-		if (mode === "new") {
-			const sampleId = "ajz"
-			navigate(`/quiz/{ajz}/play`)
-			// generate new questionSet
-			// run new questionSet
-		} else if (mode === "existing") {
-			// update existing questionSet (if changes)
-			// generate new questionSet (if flagged)
-			// run new questionSet, or existing, or mix
+		setIsLoading(true)
+		setError(null)
+		try {
+			const {
+				title,
+				description,
+				difficulty,
+				grade,
+				enableGenerate,
+				newQuestionCount,
+				quizRunQuestionCount,
+				questionMix,
+				quizId,
+				questions,
+			} = quizFormState
+
+			const questionSet = {
+				title,
+				description,
+				difficulty,
+				grade,
+				questions,
+			}
+
+			const config = {
+				enableGenerate,
+				newQuestionCount,
+				quizRunQuestionCount,
+				questionMix,
+				quizId,
+				mode,
+			}
+
+			const sessionId = await createSession(questionSet, config)
+
+			if (sessionId) {
+				navigate(`/quiz/${sessionId}/play`)
+			} else {
+				setError("Failed to create session.")
+			}
+		} catch (error) {
+			console.error("Failed to create session:", error)
+			setError(error.message || "Error occurred while creating session.")
+		} finally {
+			setIsLoading(false)
 		}
 	}
+
+	if (isLoading) <div>Loading...</div>
+	if (error) <div>Error: {error}</div>
 
 	return (
 		<QuizComposerView
@@ -106,7 +176,7 @@ export const QuizComposerView = ({
 	mode,
 	locked = {},
 }) => {
-	const ButtonText = () => {
+	const buttonText = () => {
 		return (
 			<>
 				{quizFormState.enableGenerate === true ? (
@@ -156,7 +226,7 @@ export const QuizComposerView = ({
 					<div className="col-span-2">{children}</div>
 
 					<Button type="submit" className="col-span-2">
-						<ButtonText />
+						{buttonText}
 					</Button>
 				</form>
 			</div>
@@ -283,7 +353,7 @@ const QuizRunDetails = () => {
 								},
 							})
 						}
-						max={10} // must be max available questions (incl. any newly generated)
+						max={quizFormState.maxQuestions} // must be max available questions (incl. any newly generated)
 						min={1}
 					/>
 					<div className="text-center pt-1">

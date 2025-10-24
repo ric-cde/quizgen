@@ -9,7 +9,7 @@ const AppRouter = () => (
 		<Route path="/" element={<Layout />}>
 			<Route index element={<Home />} />
 			<Route path="compose" element={<ComposeNewPage />} />
-			<Route path="quiz/:quizId/play" element={<QuizRunner />} />
+			<Route path="quiz/play" element={<QuizRunner />} />
 			<Route
 				path="quiz/:quizId/compose"
 				element={<ComposeExistingPage />}

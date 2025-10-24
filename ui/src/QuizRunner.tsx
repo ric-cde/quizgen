@@ -1,106 +1,43 @@
 // @ts-nocheck
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useParams, useNavigate } from "react-router"
+import { loadSession } from "@/services/storage.js"
 
 const QuizRunner = () => {
+	const { sessionId } = useParams()
+	const navigate = useNavigate()
+	const [isLoading, setIsLoading] = useState(true)
+	const [session, setSession] = useState(null)
+
+	useEffect(() => {
+		const load = async () => {
+			const loadedSession = await loadSession(sessionId)
+			if (!loadedSession) {
+				console.error("Session not found")
+				navigate(`/`)
+				return
+			}
+			setSession(loadedSession)
+			setIsLoading(false)
+		}
+		load()
+	}, [sessionId])
+
+	if (isLoading) return <div>Loading....</div>
+	if (!session) return <div>Session not found.</div>
 	return (
 		<div>
 			<h1>Take a quiz</h1>
+
+			<div className="bg-gray-50 max-w-sm">
+				<h3 className="text-3xl">Debugger</h3>
+				<pre className="text-xs">
+					{JSON.stringify(location.state, null, 2)}
+				</pre>
+			</div>
 		</div>
 	)
 }
 
 export default QuizRunner
-
-const TweetSearchResults = ({ tweets }) => {
-	const [inThisLocation, setInThisLocation] = useState(false)
-	const [filterText, setFilterText] = useState("")
-
-	return (
-		<div>
-			<SearchBar
-				filterText={filterText}
-				setFilterText={setFilterText}
-				inThisLocation={inThisLocation}
-				setInThisLocation={setInThisLocation}
-			/>
-			<TweetList
-				filterText={filterText}
-				inThisLocation={inThisLocation}
-				tweets={tweets}
-			/>
-		</div>
-	)
-}
-
-const SearchBar = ({
-	filterText,
-	setFilterText,
-	inThisLocation,
-	setInThisLocation,
-}) => {
-	return (
-		<div>
-			<form>
-				<input
-					type="text"
-					placeholder="Search..."
-					onChange={(e) => setFilterText(e.currentTarget.value)}
-					value={filterText}
-				/>
-
-				<p>
-					<label>
-						<input
-							type="checkbox"
-							checked={inThisLocation}
-							onChange={() => setInThisLocation(e.target.checked)}
-						/>{" "}
-						Only show tweets in your location
-					</label>
-				</p>
-			</form>
-		</div>
-	)
-}
-
-const TweetList = ({ tweets, filterText, inThisLocation }) => {
-	const rows = []
-	const lastCategory = null
-
-	tweets.forEach((tweet) => {
-		if (inThisLocation && !tweet.isLocal) {
-			return
-		}
-		if (!tweet.text.toLowerCase().includes(filterText.toLowerCase())) {
-			return
-		}
-		if (tweet.category !== lastCategory) {
-			rows.push(
-				<TweetCategory category={tweet.category} key={tweet.category} />
-			)
-		}
-		rows.push(<TweetRow tweet={tweet} key={tweet.text} />)
-		lastCategory = tweet.category
-	})
-
-	return <div>{rows}</div>
-}
-
-const TweetCategory = ({ category }) => {
-	return (
-		<tr>
-			<th colSpan="2">{category}</th>
-		</tr>
-	)
-}
-
-const TweetRow = ({ tweet }) => {
-	const color = isLocal ? "color: red;" : "color: inherit;"
-	return (
-		<tr>
-			<td style={color}>{tweet.text}</td>
-			<td>{tweet.retweets}</td>
-		</tr>
-	)
-}

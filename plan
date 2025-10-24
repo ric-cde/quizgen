@@ -175,11 +175,37 @@ Layout
         [Home]
         [Settings]
 
-Settins
+Settings
     seeAnswersAtValidation (show correct answers immediately after answer submitted, or only at end)
 
 
-## Pages
+### Data model (updates)
+
+
+
+quizSessions/rounds:
+- create a quizSessionId (persist it in localStorage) (??)
+    version 1:
+        - simply store current quizSession in location/useState and sessionStorage (fallback, debounced), run quiz at /quiz/:quizId/play
+        - Has a status (ready, inProgress, complete).
+        - QuizRunner checks state, or falls back to sessionStorage.
+    verison 2:
+        - mirror quizSession to localStorage. Stored in array/object.
+        - Navigating to quizId URL either shows start (ready), active question (inProgress), or a finish screen.
+        - All existing quizSessions stored in a table/array/object.
+    version 3:
+        - when QuizRunner mounts, fetches quizId data via API
+
+handleSubmit / selectQuestions
+    version 1:
+    - quizSessionId generated
+    version 2:
+    - POST form state ({questionMix: "new", newQuestionCount: 5}) to api/quiz-generator
+    - quiz-generator is mocked to service running locally. (replaced for future version 3 with full API)
+    - this places data in quizSession and stores it in localStorage (as above)
+
+
+<!-- ~~## Pages
 
 » Home
     list: Existing Quizzes cards (if any) 
@@ -206,7 +232,7 @@ Settins
             description (locked or editable)
             # of additional questions
             difficulty of new questions
-            btn GENERATE QUESTIONS -> START QUIZ
+            btn GENERATE QUESTIONS -> START QUIZ~~ -->
 
 
 ## Wireframe
@@ -382,7 +408,7 @@ https://www.youtube.com/watch?v=riDzcEQbX6k
 
 // Routing: add app/layout.tsx (header + navigation) and app/router.tsx. Write shell of app/pages. [✔️]
 
-// Write minimum scaffold of initial components on each page
+// Write minimum scaffold of initial components on each page [✔️]
 
 // Create mock data
 
