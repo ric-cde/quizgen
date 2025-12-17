@@ -6,7 +6,7 @@ import AppRouter from "./router.tsx"
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
-		<BrowserRouter>
+		<BrowserRouter basename={import.meta.env.BASE_URL}>
 			<AppRouter />
 		</BrowserRouter>
 	</StrictMode>
