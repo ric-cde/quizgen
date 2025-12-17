@@ -2,7 +2,7 @@
 
 Title: Emendatio -- Test and hone your knowledge in any field.
 
-Pain point: LLMs can act as a quiz tutor, but there is a lot of friction and inconsistency. E.g. every time you want to quiz yourself on a topic, you need to write a detailed prompt with instructions, context (who is the user), source data, etc. And if you do this repeatedly in a single chat, the context window can become clogged.
+Pain point: LLMs are excellent learning tools that can be used to generate quizzes. But using them for this purpose is prone to friction and inconsistency. E.g. every time you want to quiz yourself on a topic, you may need to write a detailed prompt with instructions, context (who is the user), source data, etc. And if you want to quiz yourself on the same subject continuously - e.g. repeatedly in a single chat - the context window can become clogged.
 
 Description: Emendatio allows you to feed in your topic or domain and upload source documents. A series of questions or dialogs helps you create a quiz tailored to your needs. Quizzes are generated according to rigorous standards and automated requirements gathering.
 
@@ -181,17 +181,15 @@ Settings
 
 ### Data model (updates)
 
-
-
 quizSessions/rounds:
 - create a quizSessionId (persist it in localStorage) (??)
     version 1:
-        - simply store current quizSession in location/useState and sessionStorage (fallback, debounced), run quiz at /quiz/:quizId/play
+        - simply store current quizSession in sessionStorage (fallback, debounced?), run quiz at /quiz/:sessionId/play
         - Has a status (ready, inProgress, complete).
         - QuizRunner checks state, or falls back to sessionStorage.
     verison 2:
         - mirror quizSession to localStorage. Stored in array/object.
-        - Navigating to quizId URL either shows start (ready), active question (inProgress), or a finish screen.
+        - Navigating to sessionId URL either shows start (ready), active question (inProgress), or a finish screen.
         - All existing quizSessions stored in a table/array/object.
     version 3:
         - when QuizRunner mounts, fetches quizId data via API
@@ -272,21 +270,20 @@ https://wireframe.cc/yGMi77
 
 ### v3
 
--   Refactor backend as service/API
+-   Refactor backend as simple llm service/API
 -   Backend connects to UI
 -   CI/CD pipelines (AWS)
--   Data stored in-memory only
--   Runs locally.
+-   Data still stored in-memory only
 
 ### v4
 
 -   QoL improvements (eval/validation of answers).
--   Runs in cloud now (i.e. llm service)
+-   Runs in cloud now (i.e. llm service) but client stil local
 -   Rate limiting for API (cap it at x amount)
 
 ### v5
 
--   Add user log in
+-   Add user log in?
 -   Quiz sets persisted in database
 
 ### v6

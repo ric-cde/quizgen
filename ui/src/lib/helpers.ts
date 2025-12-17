@@ -96,3 +96,11 @@ export function slugify(topicName, maxWord = 10, maxLength = 40) {
 
 	return sanitiseSlug(slug)
 }
+
+
+export const millisecondsToMinsSecs = (total) => {
+	const totalSeconds = Math.floor(total / 1000)
+	const minutes = Math.floor(totalSeconds / 60)
+	const seconds = totalSeconds % 60
+	return `${minutes}:${seconds.toString().padStart(2, "0")}`
+}

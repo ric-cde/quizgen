@@ -10,7 +10,5 @@
 		"ui": "npm start --workspace=ui",
 		"gcp": "git add . && git commit && git push"
 	},
-	"dependencies": {
-		"nanoid": "^5.1.6"
-	}
+	"dependencies": {}
 }

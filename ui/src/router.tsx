@@ -1,20 +1,21 @@
-import Home from "./Home.tsx"
-import QuizComposer from "./QuizComposer.tsx"
-import QuizRunner from "./QuizRunner.tsx"
-import Layout from "./components/Layout.tsx"
+import Home from "@/pages/Home.tsx"
+import QuizComposer from "@/pages/QuizComposer.tsx"
+import QuizRunner from "@/pages/QuizRunner.tsx"
+import Layout from "@/layouts/Layout.tsx"
 import { Routes, Route, useParams } from "react-router"
+import QuizViewer from "./pages/QuizViewer"
 
 const AppRouter = () => (
 	<Routes>
 		<Route path="/" element={<Layout />}>
 			<Route index element={<Home />} />
 			<Route path="compose" element={<ComposeNewPage />} />
-			<Route path="quiz/play" element={<QuizRunner />} />
+			<Route path="quiz/play/:sessionId/" element={<QuizRunner />} />
 			<Route
-				path="quiz/:quizId/compose"
+				path="quiz/compose/:quizId"
 				element={<ComposeExistingPage />}
 			/>
-			<Route path="quiz/:quizId/edit" element={<EditExistingPage />} />
+			<Route path="quiz/view/:quizId" element={<ViewExistingPage />} />
 		</Route>
 	</Routes>
 )
@@ -28,13 +29,9 @@ const ComposeExistingPage = () => {
 	return <QuizComposer mode="existing" quizId={quizId} />
 }
 
-const EditExistingPage = () => {
+const ViewExistingPage = () => {
 	const { quizId } = useParams()
-	return <QuizEditor quizId={quizId} />
-}
-
-const QuizEditor = ({ quizId }) => {
-	return <>{quizId}</>
+	return <QuizViewer quizId={quizId} />
 }
 
 export default AppRouter

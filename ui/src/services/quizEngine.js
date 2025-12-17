@@ -1,4 +1,4 @@
-import QUIZ_DEFAULTS from "@/lib/constants.ts"
+import { QUIZ_DEFAULTS } from "@/lib/constants.ts"
 import { nanoid } from "nanoid"
 import { generateQuestionSet } from "@/services/generator.js"
 import {
@@ -14,7 +14,7 @@ export const createSession = async (questionSet, config) => {
 	const quizId = mode === "new" ? nanoid(10) : config.quizId
 
 	// attempt to generate new questions if needed
-	let updatedQuestionBank = { ...questionSet, quizId }
+	let updatedQuestionBank = { ...questionSet, id: quizId }
 	let newQuestionSet = { questions: [] }
 	if (config.enableGenerate === true) {
 		;({ updatedQuestionBank, newQuestionSet } =
@@ -36,8 +36,8 @@ export const createSession = async (questionSet, config) => {
 	}
 	const session = buildSession(updatedQuestionBank, sessionQuestions, quizId)
 
-	await saveLiveSession(session)
-	const success = saveSession(session.id, session)
+	saveLiveSession(session)
+	const success = await saveSession(session.id, session)
 	if (!success) throw new Error("Failed to save session")
 	return session.id
 }
@@ -50,6 +50,7 @@ async function handleQuestionGeneration(questionSet, config, quizId) {
 		grade,
 		questions,
 	} = questionSet
+
 	let newQuestionSet
 
 	try {
@@ -78,7 +79,7 @@ async function handleQuestionGeneration(questionSet, config, quizId) {
 
 	const updatedQuestionBank = {
 		...questionSet,
-		quizId,
+		id: quizId,
 		description: newQuestionSet.description,
 		questions: [...questionSet.questions, ...newQuestionSet.questions],
 	}
@@ -91,32 +92,53 @@ async function handleQuestionGeneration(questionSet, config, quizId) {
 function buildSession(questionBank, questions, quizId) {
 	const { title, description, difficulty, grade } = questionBank
 	return {
-		quizId,
 		id: nanoid(10),
+		quizId,
+		status: "draft",
+		questionIndex: 0,
 		title,
 		description,
 		difficulty,
 		grade,
 		questions,
-		status: "draft",
 		createdAt: new Date().toISOString(),
-		currentQuestionIndex: 0,
+		attempted: 0,
+		correct: 0,
+		skipped: 0,
 	}
 }
 
-export const updateSession = async (session) => {}
+// export const updateSession = async (newSession) => {
+// 	// used to non-destructively update, e.g. questions array
+// 	// is this necessary? if so, why?
+// }
 
 export const completeSession = async (session) => {
-	// use results to calculate score
-
-	// const score =
-	// const updatedSession = {...session, status: "complete", updatedAt: new Date().toISOString()}
-
+	console.log("completing session...")
 	// save the session into localstorage
-	const success = saveSession(updatedSession.id, updateSession)
-	if (!success) throw new Error("Failed to save session")
+
+	const { title, description, difficulty, grade, quizId, questions } = session
+
+	// in future, possibly only update questions (and relevant metadata) as other props only changed during compose/generate
+	const updatedQuestionBank = {
+		title,
+		description,
+		difficulty,
+		grade,
+		id: quizId,
+		questions,
+	}
+
+	try {
+		await saveSession(session.id, session)
+		// save the updated questionBank w/ updated attempts array
+		await saveQuestionBank(quizId, updatedQuestionBank)
+	} catch (err) {
+		throw new Error(`Failed to complete session: ${err.message}`)
+	}
+
 	// clear the currentQuizSession in sessionStorage
-	await saveLiveSession({})
+	saveLiveSession({})
 
 	return true
 }
@@ -162,40 +184,39 @@ function selectRandomQuestions(questions, numberOfQuestions = 5) {
 	return shuffled
 }
 
-function addQuestionsMetadata(
-	{ questions, difficulty },
-	lastQuestionTrancheId
-) {
+function addQuestionsMetadata({ questions }, lastQuestionTrancheId) {
 	return questions.map((question) => ({
 		...question,
 		questionTrancheId: lastQuestionTrancheId + 1,
-		difficulty: difficulty,
 		createdAt: new Date().toISOString(),
 		attempts: [],
 		id: nanoid(6),
 		attemptCount: 0,
 		correctCount: 0,
+		skippedCount: 0,
 	}))
 }
 
 export const checkAnswer = ({ answers }, userAnswer) => {
 	// receives question object and user guess
+
 	const isCorrect = answers.some(
-		(a) => a.toLowerCase() === userAnswers.toLowerCase()
+		(a) => a.toLowerCase() === userAnswer.toLowerCase()
 	)
 
-	const isYesNo = answers.some((a) => a === "yes" || a === "no")
+	// TODO add fuzzy match logic
 
-	let otherAnswers
-	if (isCorrect) {
-		// if correct guess, show other answers
-		if (answers.length > 1 && !isYesNo) {
-			otherAnswers = answers.filter((answer) => userAnswer !== answer)
-		}
-	} else {
-		// or show all answers
-		otherAnswers = answers
+	// const isYesNo = answers.some((a) => a === "yes" || a === "no")
+
+	// TODO: if y/n, accept from list of postive/negative answers
+
+	const questionAttempt = {
+		userAnswer,
+		isCorrect,
+		createdAt: new Date(),
+		id: nanoid(6),
+		answersAtTime: answers,
 	}
 
-	return { isCorrect, otherAnswers }
+	return { isCorrect, questionAttempt }
 }

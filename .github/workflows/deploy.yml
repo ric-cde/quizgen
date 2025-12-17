@@ -1,0 +1,73 @@
+name: Deploy App
+
+on:
+    push:
+        branches: [main]
+    workflow_dispatch:
+
+# Permissions for GitHub Pages deployment
+permissions:
+    contents: read
+    pages: write
+    id-token: write
+
+jobs:
+  # JOB 1: Deploy Frontend to GitHub Pages
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout Code
+          uses: actions/checkout@v4
+
+        - name: Setup Node
+          uses: actions/setup-node@v4
+          with:
+              node-version: "20"
+
+          # Install root dependencies
+        - name: Install dependencies
+          run: npm install
+
+          # Build the UI workspace specifically
+        - name: Build Frontend
+          run: npm run build --workspace=ui
+
+        # GitHub Pages Artifact Upload (gets 'dist' from 'ui')
+        - name: Upload Pages Artifact
+          uses: actions/upload-pages-artifact@v3
+          with:
+              path: ./ui/dist
+
+        - name: Deploy To GitHub Pages
+          uses: actions/deploy-pages@v4
+
+  # JOB 2: Deploy Backend to AWS Lambda
+  deploy-backend:
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout Code
+          uses: actions/checkout@v4
+
+        - name: Setup Node
+          uses: actions/setup-node@v4
+          with:
+              node-version: "20"
+
+          # We CD into 'api' so we only zip backend logic
+        - name: Zip backend
+          working-directory: ./api
+          run: |
+              npm install
+              zip -r function.zip .
+
+          # Push zip to AWS
+        - name: Deploy to AWS Lambda
+          working-directory: ./api
+          env:
+              AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+              AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+              AWS_REGION: ${{ secrets.AWS_REGION }}
+          run: |
+              aws lambda update-function-code \
+                --function-name llm-proxy \
+                --zip-file fileb://function.zip

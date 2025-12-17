@@ -4,7 +4,7 @@ import { Outlet } from "react-router"
 const Layout = () => {
 	return (
 		<div className="min-h-dvh pt-10">
-			<div className="mx-auto w-full sm:w-[640px] md:w-[800px] max-w-[800px] px-4 bg-amber-100">
+			<div className="mx-auto w-full sm:w-[640px] md:w-[800px] max-w-[800px] px-4 bg-gray-100">
 				<Navigation />
 				<Outlet />
 			</div>

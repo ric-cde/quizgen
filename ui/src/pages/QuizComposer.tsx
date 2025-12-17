@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { Slider } from "@/components/ui/slider"
+import ErrorBox from "@/components/ErrorBox"
 import { Sparkles, GraduationCap } from "lucide-react"
-import { ToggleGroup, ToggleGroupItem } from "./components/ui/toggle-group"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { createSession } from "@/services/quizEngine.js"
 import { loadQuestionBank } from "@/services/storage.js"
 
@@ -73,19 +74,20 @@ const QuizComposerPage = ({ quizId, mode }) => {
 						difficulty,
 						grade,
 						quizType,
-						maxQuestions: questions.length,
+						maxQuestions: questions.length + prev.newQuestionCount,
 						questions,
 					}))
 				} catch (error) {
 					console.error("Failed to load quiz:", error)
 					setError("Failed to load quiz data.")
+					navigate(`/compose`, { replace: true })
 				} finally {
 					setIsLoading(false)
 				}
 			}
 			load()
 		}
-	}, [mode, quizId])
+	}, [mode, quizId, navigate])
 
 	const handleChange = (e) => {
 		// Check if event change from an input
@@ -137,7 +139,7 @@ const QuizComposerPage = ({ quizId, mode }) => {
 			const sessionId = await createSession(questionSet, config)
 
 			if (sessionId) {
-				navigate(`/quiz/${sessionId}/play`)
+				navigate(`/quiz/play/${sessionId}`)
 			} else {
 				setError("Failed to create session.")
 			}
@@ -149,22 +151,31 @@ const QuizComposerPage = ({ quizId, mode }) => {
 		}
 	}
 
-	if (isLoading) <div>Loading...</div>
-	if (error) <div>Error: {error}</div>
-
+	if (isLoading && mode === "existing" && !quizFormState.title)
+		return <div>Loading...</div>
 	return (
-		<QuizComposerView
-			{...{
-				quizFormState,
-				handleChange,
-				handleSubmit,
-				mode,
-			}}
-			locked={{}}
-		>
-			<GenerateDetails />
-			{mode === "existing" ? <QuizRunDetails /> : null}
-		</QuizComposerView>
+		<>
+			{error ? (
+				<ErrorBox
+					errorTitle="Could not create session."
+					error={error}
+				/>
+			) : null}
+
+			<QuizComposerView
+				{...{
+					quizFormState,
+					handleChange,
+					handleSubmit,
+					mode,
+					isLoading,
+				}}
+				locked={{}}
+			>
+				<GenerateDetails />
+				{mode === "existing" ? <QuizRunDetails /> : null}
+			</QuizComposerView>
+		</>
 	)
 }
 
@@ -175,31 +186,28 @@ export const QuizComposerView = ({
 	handleSubmit,
 	mode,
 	locked = {},
+	debug = true,
+	isLoading,
 }) => {
-	const buttonText = () => {
-		return (
-			<>
-				{quizFormState.enableGenerate === true ? (
-					<>
-						<Sparkles className="mr-2" />
-						{mode === "new" ? "Generate & " : "Generate More & "}
-					</>
-				) : (
-					<GraduationCap className="mr-2" />
-				)}
-				Run Quiz
-			</>
-		)
-	}
+	const buttonText = (
+		<>
+			{quizFormState.enableGenerate === true ? (
+				<>
+					<Sparkles className="mr-2" />
+					{mode === "new" ? "Generate & " : "Generate More & "}
+				</>
+			) : (
+				<GraduationCap className="mr-2" />
+			)}
+			Run Quiz
+		</>
+	)
 
 	return (
 		<QuizFormContext.Provider
 			value={{ quizFormState, handleChange, locked, mode }}
 		>
 			<div>
-				<pre className="text-xs">
-					{JSON.stringify(quizFormState, null, 2)}
-				</pre>
 				<h1>Create a quiz</h1>
 				<form
 					onSubmit={handleSubmit}
@@ -216,19 +224,33 @@ export const QuizComposerView = ({
 						type="text"
 						placeholder="Optional"
 					/>
-					{!quizFormState.description && (
+					{!quizFormState.description ? (
 						<p className="col-span-2">
-							This field will automatically generate if left
-							blank.
+							<em>
+								This field will automatically generate if left
+								blank.
+							</em>
 						</p>
-					)}
+					) : null}
 
 					<div className="col-span-2">{children}</div>
 
-					<Button type="submit" className="col-span-2">
-						{buttonText}
+					<Button
+						type="submit"
+						className="col-span-2"
+						disabled={isLoading}
+					>
+						{isLoading ? "Creating..." : buttonText}
 					</Button>
 				</form>
+				{debug && (
+					<details>
+						<summary>`quizFormState` object</summary>
+						<pre className="text-xs whitespace-pre-wrap">
+							{JSON.stringify(quizFormState, null, 2)}
+						</pre>
+					</details>
+				)}
 			</div>
 		</QuizFormContext.Provider>
 	)
@@ -243,19 +265,24 @@ const GenerateDetails = () => {
 			<InputField name="difficulty" type="text" />
 			<InputField name="grade" type="text" />
 			<InputField name="quizType" type="text" disabled={true} />
-			<label>Question count</label>
+			<label htmlFor="newQuestionCount">Question count</label>
 			<div>
 				<Slider
+					id="newQuestionCount"
 					className="pt-6"
 					value={[quizFormState.newQuestionCount]}
-					onValueChange={([newValue]) =>
+					onValueChange={([newValue]) => {
+						const newMax =
+							(quizFormState.questions?.length || 0) + newValue
 						handleChange({
-							target: {
-								name: "newQuestionCount",
-								value: newValue,
-							},
+							newQuestionCount: newValue,
+							maxQuestions: newMax,
+							quizRunQuestionCount: Math.min(
+								quizFormState.quizRunQuestionCount || newMax,
+								newMax
+							),
 						})
-					}
+					}}
 					max={10}
 					min={1}
 				/>
@@ -272,12 +299,21 @@ const GenerateDetails = () => {
 				<Switch
 					checked={quizFormState.enableGenerate}
 					onCheckedChange={(isEnabled) => {
+						const newMax = isEnabled
+							? (quizFormState.questions?.length || 0) +
+							  quizFormState.newQuestionCount
+							: quizFormState.questions?.length || 1
 						handleChange({
 							enableGenerate: isEnabled,
 							questionMix: isEnabled ? "new" : "existing",
+							maxQuestions: newMax,
+							quizRunQuestionCount: Math.min(
+								quizFormState.quizRunQuestionCount,
+								newMax
+							),
 						})
 					}}
-					// disabled={mode === "new" ? true : false}
+					disabled={mode === "new" ? true : false}
 				/>
 			</h2>
 
@@ -353,7 +389,7 @@ const QuizRunDetails = () => {
 								},
 							})
 						}
-						max={quizFormState.maxQuestions} // must be max available questions (incl. any newly generated)
+						max={quizFormState.maxQuestions || 1} // must be max available questions (incl. any newly generated)
 						min={1}
 					/>
 					<div className="text-center pt-1">

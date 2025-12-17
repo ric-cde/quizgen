@@ -1,8 +1,5 @@
-const mockGeneration = (questionSet, config) => {
-	return {}
-}
 
-const generateQuestionSet = async ({
+export const generateQuestionSet = async ({
 	title,
 	description = "",
 	difficulty,
@@ -14,8 +11,8 @@ const generateQuestionSet = async ({
 	if (!title) throw new Error("title is required")
 	if (count === undefined) throw new Error("question `count` is required")
 	if (!difficulty) throw new Error("difficulty is required")
-	if (!questions || questions.length === 0) {
-		extend = false
+	if (extend === true && (!questions || questions.length === 0)) {
+		throw new Error("extend set to true but no questions provided")
 	}
 
 	const questionSet = {
@@ -23,12 +20,43 @@ const generateQuestionSet = async ({
 		description,
 		difficulty,
 		grade,
-		count,
 		questions,
 	}
-	const config = { extend }
+	const config = { count, extend }
 
-	return mockGeneration(questionSet, config)
+	const newQuestionSet = mockGeneration(questionSet, config)
+	// const newQuestionSet = localGenerateQuestionSet(questionSet, config)
+	// const newQuestionSet = {}
+
+	return newQuestionSet
 }
 
-export default { generateNew }
+const mockGeneration = (questionSet, config) => {
+	const { difficulty } = questionSet
+	const mockData = {
+		title: "Bears",
+		description:
+			"Intermediate-level questions about various bear species, their characteristics, and behaviors.",
+		questions: [
+			{
+				prompt: "Which bear species is primarily known for its distinctive white fur?",
+				answers: ["polar bear", "polar"],
+				difficulty,
+			},
+			{
+				prompt: "What is the main diet of a giant panda?",
+				answers: ["bamboo", "bamboo shoots"],
+				difficulty,
+			},
+			{
+				prompt: "Are bears carnivores, herbivores, or omnivores?",
+				answers: ["omnivores", "omnivore"],
+				difficulty,
+			},
+		],
+	}
+
+	return { ...mockData, questions: mockData.questions.slice(0, config.count) }
+}
+
+export default { generateQuestionSet }
