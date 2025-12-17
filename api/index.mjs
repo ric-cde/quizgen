@@ -3,8 +3,7 @@ import OpenAI from "openai"
 import questionInstructions from "./question-instructions.js"
 
 const client = new OpenAI({
-	apiKey: import.meta.env.OPENAI_API_KEY,
-	dangerouslyAllowBrowser: true,
+	apiKey: process.env.OPENAI_API_KEY,
 })
 
 export async function generateQuestionSet(
@@ -19,7 +18,6 @@ export async function generateQuestionSet(
 			instructions,
 			input: prompt,
 			store: false,
-			// temperature: 1,
 			text: {
 				format: {
 					type: "json_object",
@@ -76,34 +74,16 @@ export const handler = async (event) => {
 	try {
 		// 2. Parse the incoming body (from your React app)
 		const body = JSON.parse(event.body || "{}")
-
+		console.log(body)
 		const { questionSet, config } = body
-
+		console.log(questionSet)
 		const response = await generateQuestionSet(questionSet, config)
-		const data = await response.json()
+		console.log(response)
 
-		// // 3. Call OpenAI (using Node 20 native fetch)
-		// const openAIResponse = await fetch(
-		// 	"https://api.openai.com/v1/chat/completions",
-		// 	{
-		// 		method: "POST",
-		// 		headers: {
-		// 			"Content-Type": "application/json",
-		// 			Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-		// 		},
-		// 		body: JSON.stringify({
-		// 			model: "gpt-4o-mini", // Cost-efficient model
-		// 			messages: [{ role: "user", content: userPrompt }],
-		// 			max_tokens: 150,
-		// 		}),
-		// 	}
-		// )
-
-		// 4. Return the result
 		return {
 			statusCode: 200,
 			headers: corsHeaders,
-			body: JSON.stringify(data),
+			body: JSON.stringify(response),
 		}
 	} catch (error) {
 		console.error("Error:", error)

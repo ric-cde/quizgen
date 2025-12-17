@@ -23,10 +23,23 @@ export const generateQuestionSet = async ({
 	}
 	const config = { count, extend }
 
-	const newQuestionSet = mockGeneration(questionSet, config)
+	// const newQuestionSet = mockGeneration(questionSet, config)
 	// const newQuestionSet = localGenerateQuestionSet(questionSet, config)
 	// const newQuestionSet = {}
 
+	const response = await fetch(
+		import.meta.env.VITE_API_URL,
+		// "https://htjw4knlprqwk6kas25sud3b6u0gqwpw.lambda-url.eu-west-1.on.aws/",
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ questionSet, config }),
+		}
+	)
+	const newQuestionSet = await response.json()
+	console.log(newQuestionSet)
 	return newQuestionSet
 }
 
