@@ -96,8 +96,8 @@ const ExistingQuizList = () => {
 									topic={t}
 									{...{ handleDelete }}
 								/>
-						  ))
-						: "No topics found."}
+							))
+						: "You haven't generated any quizzes yet."}
 				</div>
 			</>
 		)
