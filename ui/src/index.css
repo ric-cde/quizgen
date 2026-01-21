@@ -125,15 +125,15 @@
 	h1 {
 		@apply text-5xl font-bold tracking-tight mt-8 mb-6;
 	}
-	
+
 	h2 {
 		@apply text-3xl font-semibold mt-6 mb-4;
 	}
-	
+
 	h3 {
 		@apply text-2xl font-semibold mt-6 mb-4;
 	}
-	
+
 	h1,
 	h2,
 	h3,
@@ -142,14 +142,13 @@
 	h6 {
 		@apply font-poppins;
 	}
-	
+
 	p {
 		@apply leading-relaxed mb-4;
 	}
 }
 
 @layer components {
-
 	/* font-family: "Poppins", Courier, monospace; */
 	/* .sidebar-icon {
 		@apply relative flex items-center justify-center h-12 w-12 mt-2 mb-2 mx-auto shadow-lg p-2 bg-gray-800 text-green-500 hover:bg-green-600 hover:text-white rounded-3xl hover:rounded-xl transition-all duration-300 ease-linear cursor-pointer;

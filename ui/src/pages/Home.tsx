@@ -2,26 +2,33 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useNavigate, Link } from "react-router"
 import { loadTopics, deleteTopic } from "@/services/storage.js"
-import { CircleQuestionMark } from "lucide-react"
+import { CircleQuestionMark, Trash2, Dices } from "lucide-react"
 import ErrorBox from "@/components/ErrorBox"
 
 const Home = () => {
 	return (
-		<div>
-			<h1>Quiz Generator</h1>
-			<h3>Challenge yourself on any topic </h3>
-			<TopicQuickStart />
+		<>
+			<div className="min-h-[50vh] flex flex-col justify-around bg-gray-100 pb-4 rounded-2xl">
+				<h1 className="text-center text-6xl font-extrabold mt-10 mb-0">
+					Quiz Generator
+				</h1>
+				<h3 className="text-center my-0">
+					Challenge yourself on any topic{" "}
+				</h3>
+				<TopicQuickStart />
+			</div>
 			<ExistingQuizList />
-		</div>
+		</>
 	)
 }
 
 const TopicQuickStart = () => {
 	const [topic, setTopic] = useState("")
 	const navigate = useNavigate()
+	const inputRef = useRef(null)
 
 	const handleSubmit = (e) => {
 		e.preventDefault()
@@ -31,15 +38,27 @@ const TopicQuickStart = () => {
 	}
 	return (
 		<>
-			<form onSubmit={handleSubmit}>
+			<form
+				className="mx-auto sm:w-[640px] flex justify-center items-center gap-3 py-3 bg-background rounded-3xl border border-transparent focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-ring cursor-text "
+				onSubmit={handleSubmit}
+				onClick={() => inputRef.current?.focus()}
+			>
 				<Input
+					ref={inputRef}
 					type="text"
 					placeholder="Enter a topic (e.g. French history)"
 					value={topic}
 					onChange={(e) => setTopic(e.target.value)}
-					className="ml-5 w-75 p-2 bg-white mr-2"
+					className="md:text-lg w-full h-14 pl-5 border-0 shadow-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
 				/>
-				<Button type="submit">Configure quiz</Button>
+				<Button
+					className="h-14 px-5 w-max mr-5 rounded-xl"
+					type="submit"
+					aria-label="Generate quiz"
+					title="Generate quiz"
+				>
+					<Dices className="size-6" />
+				</Button>
 			</form>
 		</>
 	)
@@ -144,7 +163,7 @@ const ExistingQuiz = ({ topic, handleDelete }) => {
 					variant="destructive"
 					onClick={handleDeleteClick}
 				>
-					Delete
+					<Trash2 />
 				</Button>
 			</div>
 			<hr className="col-span-2" />

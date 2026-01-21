@@ -3,8 +3,8 @@ import { Outlet } from "react-router"
 
 const Layout = () => {
 	return (
-		<div className="min-h-dvh pt-10">
-			<div className="mx-auto w-full sm:w-[640px] md:w-[800px] max-w-[800px] px-4 bg-gray-100">
+		<div className="min-h-dvh bg-gray-200">
+			<div className="mx-auto w-full sm:w-[640px] md:w-[768px] max-w-[1100px] [&>*]:px-4">
 				<Navigation />
 				<Outlet />
 			</div>
@@ -15,13 +15,13 @@ const Layout = () => {
 const Navigation = () => {
 	const navItems = [
 		{ path: "/", label: "Home" },
-		{ path: "/compose", label: "Create Quiz" },
+		{ path: "/compose", label: "Compose Quiz" },
 		// { path: "/quiz/play", label: "Play Quiz" },
 	]
 
 	return (
-		<nav className="border-b border-border p-2">
-			<ul className="flex list-none gap-x-4 ">
+		<nav className="border-b border-border p-3">
+			<ul className="flex list-none gap-x-4 justify-between">
 				{navItems.map((item) => (
 					<NavItem key={item.path} to={item.path}>
 						{item.label}
@@ -56,7 +56,6 @@ const NavItem = ({
 			>
 				{children}
 			</NavLink>
-			<br />
 		</li>
 	)
 }
