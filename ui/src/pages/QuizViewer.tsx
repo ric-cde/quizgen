@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Link } from "react-router"
+import { useDebug } from "@/contexts/DebugContext"
 import { loadQuizSessions, loadQuestionBank } from "@/services/storage.js"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardHeader, CardFooter, CardTitle } from "@/components/ui/card"
@@ -16,8 +17,6 @@ const QuizViewer = ({ quizId }) => {
 	const [sessions, setSessions] = useState(null)
 	const [error, setError] = useState(null)
 	const [questionBank, setQuestionBank] = useState(null)
-
-	const debug = true
 
 	useEffect(() => {
 		// load bank and sessions
@@ -51,16 +50,16 @@ const QuizViewer = ({ quizId }) => {
 			{error ? <ErrorBox errorTitle="Error" error={error} /> : null}
 			<h1>{questionBank.title}</h1>
 			<InProgressAlert {...{ sessions }} />
-			<StatsList {...{ sessions, questionBank, debug }} />
+			<StatsList {...{ sessions, questionBank }} />
 
-			<SessionsList {...{ sessions, debug }} />
+			<SessionsList {...{ sessions }} />
 
-			<QuestionList {...{ questionBank, debug }} />
+			<QuestionList {...{ questionBank }} />
 		</>
 	)
 }
 
-const StatsList = ({ sessions, questionBank, debug }) => {
+const StatsList = ({ sessions, questionBank }) => {
 	const defaults = {
 		completed: 0,
 		attempted: 0,
@@ -71,6 +70,7 @@ const StatsList = ({ sessions, questionBank, debug }) => {
 		worstQuestion: {},
 	}
 	const [stats, setStats] = useState(defaults)
+	const { debug } = useDebug()
 
 	useEffect(() => {
 		// calculate stats
@@ -89,7 +89,7 @@ const StatsList = ({ sessions, questionBank, debug }) => {
 				attempted: 0,
 				correct: 0,
 				skipped: 0,
-			}
+			},
 		)
 
 		const { worstQuestion, answerTiming } = questionBank.questions.reduce(
@@ -117,7 +117,7 @@ const StatsList = ({ sessions, questionBank, debug }) => {
 						}
 						return acc
 					},
-					[0, 0]
+					[0, 0],
 				)
 
 				if (relevantAnswerCount > 0) {
@@ -133,7 +133,7 @@ const StatsList = ({ sessions, questionBank, debug }) => {
 					prompt: "",
 				},
 				answerTiming: { totalTime: 0, totalRelevantAnswers: 0 },
-			}
+			},
 		)
 
 		sessionsCalculated.worstQuestion = worstQuestion
@@ -147,8 +147,8 @@ const StatsList = ({ sessions, questionBank, debug }) => {
 				sessionsCalculated.attempted > 0
 					? Math.round(
 							(100 * sessionsCalculated.correct) /
-								sessionsCalculated.attempted
-					  )
+								sessionsCalculated.attempted,
+						)
 					: 0,
 		}))
 	}, [sessions, questionBank])
@@ -200,7 +200,9 @@ const StatBox = ({ stat, label, className = "", titleClassName = "" }) => (
 	</div>
 )
 
-const SessionsList = ({ sessions, debug }) => {
+const SessionsList = ({ sessions }) => {
+	const { debug } = useDebug()
+
 	return (
 		<>
 			<h2>Your sessions</h2>
@@ -209,7 +211,7 @@ const SessionsList = ({ sessions, debug }) => {
 				{sessions.length > 0
 					? sessions.map((s) => (
 							<SessionItem key={s.id} session={s} />
-					  ))
+						))
 					: "No sessions found."}
 			</div>
 
@@ -271,8 +273,8 @@ const SessionItem = ({ session }) => {
 						score >= 80
 							? "text-emerald-600"
 							: score >= 50
-							? "text-amber-600"
-							: "text-red-500"
+								? "text-amber-600"
+								: "text-red-500"
 					}`}
 				>
 					{session.attempted > 0 ? score + "%" : ""}
@@ -311,7 +313,9 @@ const SessionItem = ({ session }) => {
 	)
 }
 
-const QuestionList = ({ questionBank, debug }) => {
+const QuestionList = ({ questionBank }) => {
+	const { debug } = useDebug()
+
 	const questions = questionBank.questions
 	return (
 		<>
@@ -320,7 +324,7 @@ const QuestionList = ({ questionBank, debug }) => {
 				{questions.length > 0
 					? questions.map((q) => (
 							<QuestionItem key={q.id} question={q} />
-					  ))
+						))
 					: "No questions found."}
 			</div>
 			{debug && (
@@ -369,7 +373,8 @@ const QuestionItem = ({ question }) => {
 							variant="outline"
 							className={`px-2 h-6 min-w-15 font-normal capitalize ${getDifficultyColor()}`}
 						>
-							{question.difficulty.replace(/([A-Z])/g, " $1")}
+							{question.difficulty &&
+								question.difficulty.replace(/([A-Z])/g, " $1")}
 						</Badge>
 
 						<p className="m-0 leading-tight">

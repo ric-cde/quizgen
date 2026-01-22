@@ -11,13 +11,17 @@ import ErrorBox from "@/components/ErrorBox"
 const Home = () => {
 	return (
 		<>
-			<div className="min-h-[50vh] flex flex-col justify-around bg-gray-100 pb-4 rounded-2xl">
-				<h1 className="text-center text-6xl font-extrabold mt-10 mb-0">
-					Quiz Generator
+			<div className="min-h-[50dvh] flex flex-col justify-around bg-secondary pb-4 rounded-2xl">
+				<h1 className="text-center text-6xl mt-10 mb-0">
+					<span className="inline-block text-accent p-2 tracking-wide shadow-accent/60 shadow-2xl ring-5 mr-3">
+						Quiz
+					</span>
+					<span className="">Generator</span>
 				</h1>
 				<h3 className="text-center my-0">
 					Challenge yourself on any topic{" "}
 				</h3>
+
 				<TopicQuickStart />
 			</div>
 			<ExistingQuizList />
@@ -36,6 +40,7 @@ const TopicQuickStart = () => {
 		if (!value) return
 		navigate(`/compose?title=${encodeURIComponent(value)}`)
 	}
+
 	return (
 		<>
 			<form
@@ -56,6 +61,7 @@ const TopicQuickStart = () => {
 					type="submit"
 					aria-label="Generate quiz"
 					title="Generate quiz"
+					disabled={topic === ""}
 				>
 					<Dices className="size-6" />
 				</Button>

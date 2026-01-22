@@ -4,6 +4,7 @@ import { millisecondsToMinsSecs } from "@/lib/helpers.ts"
 
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router"
+import { useDebug } from "@/contexts/DebugContext"
 import {
 	loadSession,
 	saveSession,
@@ -26,7 +27,8 @@ import { toast, Toaster } from "sonner"
 import { useRef } from "react"
 import ErrorBox from "@/components/ErrorBox"
 
-const QuizRunner = ({ debug = true }) => {
+const QuizRunner = () => {
+	const { debug } = useDebug()
 	const { sessionId } = useParams()
 	const navigate = useNavigate()
 	const [isLoading, setIsLoading] = useState(true)
@@ -107,7 +109,7 @@ const QuizRunner = ({ debug = true }) => {
 	if (isLoading) return <div>Loading....</div>
 	if (!session) return <div>Session not found.</div>
 	return (
-		<div className="px-10">
+		<div className="min-h-[50dvh] px-10 flex flex-col justify-between items-center bg-secondary rounded-2xl ">
 			<Toaster position="top-center" expand={true} richColors />
 			{error ? <ErrorBox errorTitle="Quiz error." error={error} /> : null}
 
@@ -146,20 +148,22 @@ const QuizStart = ({ session, setSession, setError }) => {
 			status: "inProgress",
 		}))
 	}
+	const { debug } = useDebug()
 
 	return (
-		<div>
-			<h2>Quiz Start</h2>
+		<div className="min-h-30 flex flex-col items-center justify-between">
+			<h2>{session.title}</h2>
 			<Button onClick={handleStart} className="mr-2">
 				<GraduationCap className="mr-2" />
 				Start quiz
 			</Button>
-			Status: {JSON.stringify(session.status)}
+			{debug && <>status: {JSON.stringify(session.status)}</>}
 		</div>
 	)
 }
 
 const QuizInProgress = ({ session, setSession, setError }) => {
+	const { debug } = useDebug()
 	const { questionIndex, questions } = session
 	const currentQuestion = questions[questionIndex] || {}
 
@@ -167,7 +171,7 @@ const QuizInProgress = ({ session, setSession, setError }) => {
 		prevSession,
 		questionAttempt,
 		isCorrect,
-		isSkip = false
+		isSkip = false,
 	) => {
 		// map over questions, find updated question(s) to be updated and increment counts
 		const updatedQuestions = prevSession.questions.map((q, index) =>
@@ -185,8 +189,8 @@ const QuizInProgress = ({ session, setSession, setError }) => {
 							? q.skippedCount + 1
 							: q.skippedCount,
 						updatedAt: new Date(),
-				  }
-				: q
+					}
+				: q,
 		)
 
 		const newIndex = prevSession.questionIndex + 1
@@ -212,7 +216,7 @@ const QuizInProgress = ({ session, setSession, setError }) => {
 	const handleAnswer = (userAnswer) => {
 		const { questionAttempt, isCorrect } = checkAnswer(
 			currentQuestion,
-			userAnswer
+			userAnswer,
 		)
 
 		const notify = isCorrect ? toast.success : toast.error
@@ -241,12 +245,17 @@ const QuizInProgress = ({ session, setSession, setError }) => {
 	}
 
 	return (
-		<div>
-			<h2>QuizInProgress</h2>
+		<div className="min-h-30 flex flex-col items-center justify-between">
+			<h2>{session.title}</h2>
 			{questionIndex < questions.length ? (
-				<div className="flex flex-col items-center">
-					<QuestionPrompt {...{ currentQuestion }} />
-					<AnswerBox {...{ handleAnswer }} key={currentQuestion.id} />
+				<div className="min-h-[40dvh] flex flex-col items-center justify-between">
+					<div>
+						<QuestionPrompt {...{ currentQuestion }} />
+						<AnswerBox
+							{...{ handleAnswer }}
+							key={currentQuestion.id}
+						/>
+					</div>
 					<Button onClick={handleSkip} variant="outline">
 						Skip
 					</Button>
@@ -257,7 +266,7 @@ const QuizInProgress = ({ session, setSession, setError }) => {
 			)}
 
 			<br />
-			<p>Status: {JSON.stringify(session.status)}</p>
+			{debug && <p>Status: {JSON.stringify(session.status)}</p>}
 		</div>
 	)
 }
@@ -338,8 +347,8 @@ const QuizComplete = ({ session, setError }) => {
 				<p className="text-5xl font-bold mb-0">
 					{session.attempted > 0
 						? Math.round(
-								(100 * session.correct) / session.attempted
-						  )
+								(100 * session.correct) / session.attempted,
+							)
 						: 0}
 					%
 				</p>
@@ -393,8 +402,8 @@ const QuizComplete = ({ session, setError }) => {
 								{q.attemptCount > 0
 									? Math.round(
 											(100 * q.correctCount) /
-												q.attemptCount
-									  )
+												q.attemptCount,
+										)
 									: 0}
 								%
 							</span>
@@ -408,11 +417,7 @@ const QuizComplete = ({ session, setError }) => {
 }
 
 const QuestionPrompt = ({ currentQuestion }) => {
-	return (
-		<p>
-			<b>{currentQuestion.prompt}</b>
-		</p>
-	)
+	return <p className="w-100 font-semibold">{currentQuestion.prompt}</p>
 }
 
 const AnswerBox = ({ handleAnswer }) => {
@@ -432,7 +437,7 @@ const AnswerBox = ({ handleAnswer }) => {
 	return (
 		<div>
 			<form
-				className="flex items-center gap-1 bg-gray-50 p-3 rounded w-100"
+				className="flex items-center gap-1  p-3 rounded w-100"
 				onSubmit={handleSubmit}
 			>
 				<Input

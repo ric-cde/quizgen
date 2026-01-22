@@ -2,6 +2,8 @@
 
 import { useSearchParams, useNavigate } from "react-router"
 import { useState, useEffect, useContext, createContext } from "react"
+import { useDebug } from "@/contexts/DebugContext"
+
 import { QUIZ_DEFAULTS } from "@/lib/constants.js"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -186,9 +188,10 @@ export const QuizComposerView = ({
 	handleSubmit,
 	mode,
 	locked = {},
-	debug = true,
 	isLoading,
 }) => {
+	const { debug } = useDebug()
+
 	const buttonText = (
 		<>
 			{quizFormState.enableGenerate === true ? (
@@ -207,7 +210,7 @@ export const QuizComposerView = ({
 		<QuizFormContext.Provider
 			value={{ quizFormState, handleChange, locked, mode }}
 		>
-			<div>
+			<div className="flex flex-col items-center bg-secondary rounded-2xl">
 				<h1>Create a quiz</h1>
 				<form
 					onSubmit={handleSubmit}
@@ -224,12 +227,11 @@ export const QuizComposerView = ({
 						type="text"
 						placeholder="Optional"
 					/>
+					<div></div>
 					{!quizFormState.description ? (
-						<p className="col-span-2">
-							<em>
-								This field will automatically generate if left
-								blank.
-							</em>
+						<p className="text-xs italic">
+							This field will automatically generate if left
+							blank.
 						</p>
 					) : null}
 
@@ -279,7 +281,7 @@ const GenerateDetails = () => {
 							maxQuestions: newMax,
 							quizRunQuestionCount: Math.min(
 								quizFormState.quizRunQuestionCount || newMax,
-								newMax
+								newMax,
 							),
 						})
 					}}
@@ -301,7 +303,7 @@ const GenerateDetails = () => {
 					onCheckedChange={(isEnabled) => {
 						const newMax = isEnabled
 							? (quizFormState.questions?.length || 0) +
-							  quizFormState.newQuestionCount
+								quizFormState.newQuestionCount
 							: quizFormState.questions?.length || 1
 						handleChange({
 							enableGenerate: isEnabled,
@@ -309,7 +311,7 @@ const GenerateDetails = () => {
 							maxQuestions: newMax,
 							quizRunQuestionCount: Math.min(
 								quizFormState.quizRunQuestionCount,
-								newMax
+								newMax,
 							),
 						})
 					}}
@@ -330,15 +332,15 @@ const QuizRunDetails = () => {
 	return (
 		<div>
 			<h2>Quiz Run</h2>
-			<p>Section for configuring current quiz run.</p>
 			<div className="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-2">
-				<label className="col-span-2">
+				<label htmlFor="questionMix" className="col-span-2">
 					<p>
 						What combination of questions would you like to answer?
 					</p>
 					<ToggleGroup
 						type="single"
-						className="w-full flex-wrap gap-2"
+						aria-labelledby="question-mix-label"
+						className="w-full flex flex-wrap gap-2"
 						value={quizFormState.questionMix}
 						onValueChange={(value) => {
 							if (value) {
